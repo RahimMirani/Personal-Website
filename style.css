@@ -173,42 +173,49 @@ h3 {
 
 .connect .links {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: center;
 }
 
-.link {
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.9375rem;
-    transition: all 0.3s ease;
-    padding: 0.75rem 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 8px;
-    border: 1px solid transparent;
-    position: relative;
-    overflow: hidden;
-}
-
-.link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-    transition: left 0.5s ease;
-}
-
-.link:hover {
-    color: var(--text);
-    border-color: var(--border);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
     background-color: var(--background-card);
-    transform: translateX(4px);
 }
 
-.link:hover::before {
-    left: 100%;
+.social-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+}
+
+.social-icon:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.email-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0;
+    margin-left: 0.5rem;
+}
+
+.email-link:hover {
+    color: var(--accent);
 }
 
 /* Responsive Design */
@@ -232,6 +239,21 @@ h3 {
     .project h3 {
         font-size: 1rem; /* text-base */
     }
+    
+    .connect .links {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .social-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+    
+    .social-icon svg {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
 }
 
 /* Smooth scrolling and better focus states */
@@ -239,7 +261,8 @@ html {
     scroll-behavior: smooth;
 }
 
-.link:focus,
+.social-icon:focus,
+.email-link:focus,
 .project:focus {
     outline: 2px solid var(--accent);
     outline-offset: 2px;

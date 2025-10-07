@@ -122,6 +122,15 @@ h3 {
     overflow: hidden;
 }
 
+.hackathon-subtitle {
+    color: yellow;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+}
+
 .project::before {
     content: '';
     position: absolute;
@@ -169,6 +178,15 @@ h3 {
     font-size: 0.875rem;
     line-height: 1.5;
     margin-bottom: 0.5rem;
+}
+
+.project .hackathon-subtitle {
+    color: #fbbf24 !important; /* yellow-400 */
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    font-style: italic;
 }
 
 .project p:last-child {

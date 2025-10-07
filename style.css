@@ -71,7 +71,7 @@ body::after {
 main {
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 2rem;
 }
 
 h1, h2, h3 {
@@ -206,7 +206,8 @@ h3 {
 .connect {
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* space-y-4 */
+    gap: 0;
+    margin-top: 2rem;
 }
 
 .connect .links {
@@ -320,7 +321,7 @@ h3 {
     }
     
     .connect {
-        gap: 1rem;
+        margin-top: 1.5rem;
     }
     
     .connect .links {

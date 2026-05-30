@@ -62,11 +62,11 @@ main {
 }
 
 .logo {
-    font-family: var(--font-serif);
-    font-size: 1.6rem;
-    font-weight: 400;
+    font-family: var(--font-mono);
+    font-size: 1.375rem;
+    font-weight: 700;
     line-height: 1.2;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.02em;
 }
 
 .logo a {
@@ -351,7 +351,7 @@ a:focus-visible {
     }
 
     .logo {
-        font-size: 1.45rem;
+        font-size: 1.2rem;
     }
 
     .nav-links {
@@ -382,7 +382,7 @@ a:focus-visible {
     }
 
     .logo {
-        font-size: 1.35rem;
+        font-size: 1.1rem;
     }
 
     .nav-links {

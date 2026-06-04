@@ -74,6 +74,12 @@ main {
     text-decoration: none;
 }
 
+.header-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 .nav-links {
     display: flex;
     align-items: baseline;
@@ -115,11 +121,6 @@ main {
     margin-top: 1rem;
 }
 
-/* ---------- Contact ---------- */
-.connect {
-    margin-top: 2rem;
-}
-
 .social-icons-row {
     display: flex;
     flex-wrap: wrap;
@@ -147,20 +148,6 @@ main {
 .social-icon:hover {
     color: var(--text);
     transform: translateY(-1px);
-}
-
-.email-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.8125rem;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 1px;
-    transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.email-link:hover {
-    color: var(--text);
-    border-bottom-color: var(--text);
 }
 
 /* ---------- Work / Sections ---------- */
@@ -407,9 +394,5 @@ a:focus-visible {
 
     .social-icons-row {
         gap: 1.1rem;
-    }
-
-    .email-link {
-        word-break: break-all;
     }
 }

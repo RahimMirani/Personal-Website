@@ -120,8 +120,32 @@ main {
     max-width: 38rem;
 }
 
+.bio-role {
+    color: var(--text);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+}
+
+.bio-current {
+    color: var(--text-secondary);
+}
+
+.bio-previous {
+    margin-top: 0;
+}
+
 .bio + .bio {
     margin-top: 1rem;
+}
+
+.bio-role + .bio {
+    margin-top: 0.35rem;
+}
+
+.bio-current + .bio {
+    margin-top: 1.75rem;
 }
 
 /* ---------- Home nav ---------- */

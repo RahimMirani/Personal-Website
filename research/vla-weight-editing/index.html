@@ -90,7 +90,7 @@
                     <li class="key"><span class="n">3</span><b>Edit the weights</b><span>using Task 1 only</span></li>
                     <li><span class="n">4</span><b>Run the edited model</b><span>on both tasks, same 30 placements</span></li>
                 </ol>
-                <p class="callout">The edit was designed using only the colour-sorting task. The cups task played no part in it and was only measured at the end. All before and after numbers come from 30 object placements per task that were not used while designing the edit.</p>
+                <p class="callout">The edit was designed using only the colour-sorting task. The cups task played no part in it and was only measured at the end. All before and after results in the Results section come from 30 object placements per task that were not used while designing the edit.</p>
 
                 <h3>Who did what</h3>
                 <dl class="roles">
@@ -105,9 +105,17 @@
                 <div class="part-head"><span class="part-num">02</span><h2>Results</h2></div>
 
                 <h3>Task 1 · Colour sorting</h3>
-                <figure class="fig-wide">
-                    <div class="video-labels"><span>Before<span class="long"> · original weights</span></span><span>After<span class="long"> · 4 heads ×3</span></span></div>
-                    <video src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model drags the left bin off the table; the edited model sorts all four blocks"></video>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model drags the left bin off the table; the edited model sorts all four blocks"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model drags the left bin off the table"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model sorts all four blocks"></video>
+                    </div>
                     <figcaption>Same object placement, played at 2× speed. Left: the original model catches the bin rim with the second yellow block and drags the bin off the table. Right: the edited model lifts higher and sorts all four blocks in 29 s.</figcaption>
                 </figure>
                 <div class="results">
@@ -138,9 +146,17 @@
 
                 <h3>Task 2 · Cups in basket</h3>
                 <p>This task was not used at all while designing the edit; it was run at the end only to check nothing broke. It improved instead. Cups are carried higher, as with the blocks, and episodes finish sooner. The gain is smaller than on Task 1.</p>
-                <figure class="fig-wide">
-                    <div class="video-labels"><span>Before<span class="long"> · original weights</span></span><span>After<span class="long"> · 4 heads ×3</span></span></div>
-                    <video src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model knocks the second cup over; the edited model places both cups"></video>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model knocks the second cup over; the edited model places both cups"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model knocks the second cup over"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model places both cups"></video>
+                    </div>
                     <figcaption>Same object placement, played at 2× speed. Left: the original model knocks the second cup over and runs out of time. Right: the edited model carries both cups high and finishes in 24 s.</figcaption>
                 </figure>
                 <div class="tbl">
@@ -163,7 +179,7 @@
                 <h3>The problem: blocks are carried too low</h3>
                 <p>Opus 5.5 first checked whether the model mixes up the colours. It doesn't: when both bins are on the table it puts almost every block in the right one. The real failure is mechanical. The robot carries the block low, the gripper catches the rim of the bin, and the arm drags the whole bin off the table. After that the task can't be finished.</p>
                 <figure class="chart">
-                    <svg viewBox="0 0 600 250" role="img" aria-label="Peak block height during carries. Carries that hit a bin peaked at 8 to 12 cm; normal carries at 11 to 15 cm. The bin rim is at 10.5 cm.">
+                    <svg viewBox="0 0 600 262" role="img" aria-label="Peak block height during carries. Carries that hit a bin peaked at 8 to 12 cm; normal carries at 11 to 15 cm. The bin rim is at 10.5 cm.">
                         <g class="ticks" font-size="11">
                             <line class="axis" x1="52" y1="210" x2="590" y2="210"/>
                             <text x="44" y="214" text-anchor="end">0</text>
@@ -173,7 +189,7 @@
                             <line x1="52" y1="10" x2="590" y2="10" class="grid"/><text x="44" y="14" text-anchor="end">16 cm</text>
                         </g>
                         <line class="rim" x1="52" y1="78.75" x2="590" y2="78.75"/>
-                        <text class="rim-label" x="590" y="72" text-anchor="end" font-size="11">bin rim · 10.5 cm</text>
+                        <text class="rim-label" x="590" y="96" text-anchor="end" font-size="11">bin rim · 10.5 cm</text>
                         <rect class="hit" x="150" y="60" width="96" height="50"><title>Carries that hit a bin: block peaked 8–12 cm above its start</title></rect>
                         <text x="198" y="230" text-anchor="middle" font-size="11" class="label">carries that hit a bin</text>
                         <text x="198" y="245" text-anchor="middle" font-size="11" class="sub">8–12 cm</text>
@@ -202,6 +218,7 @@
                         </tbody>
                     </table>
                 </div>
+                <p class="table-note">Measured while designing the edit, on recorded inputs from the original model. The test results are in the Results section above.</p>
                 <p>This changes 1.57 million of the model's 3.35 billion weights. The edited model is saved as an ordinary checkpoint and runs with the standard code, with no extra hooks at inference. The tests show what these heads do to the robot's movement; why the model computes it this way internally is a separate question.</p>
 
                 <h3>Where the edit lives in π0.5</h3>
@@ -260,26 +277,34 @@
             grid('heads-vlm', [[6, 4], [10, 7]]);
             grid('heads-act', [[13, 4], [14, 1]]);
 
-            // Before/after clips: play only while on screen, never when the visitor prefers reduced motion.
-            var videos = Array.prototype.slice.call(document.querySelectorAll("video[data-autoplay]"));
+            // Before/after clips: start automatically when at least 35% is on screen, and pause again when they've
+            // scrolled away, but only if the script started them. A clip the visitor paused stays paused; one they
+            // started keeps playing. With reduced motion preferred, nothing starts automatically.
             var reduce = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
-            var visible = new Set();
-            function sync() {
-                videos.forEach(function (v) {
-                    if (visible.has(v) && !(reduce && reduce.matches)) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
-                    else if (!v.paused) v.pause();
-                });
+            var clips = Array.prototype.slice.call(document.querySelectorAll("video[data-autoplay]"));
+            clips.forEach(function (v) {
+                v._clip = { auto: false, userPaused: false, scripted: false };
+                v.addEventListener("pause", function () { if (!v._clip.scripted) { v._clip.userPaused = true; v._clip.auto = false; } v._clip.scripted = false; });
+                v.addEventListener("play", function () { if (!v._clip.scripted) v._clip.userPaused = false; v._clip.scripted = false; });
+            });
+            function start(v) {
+                var c = v._clip;
+                if (c.userPaused || !v.paused || (reduce && reduce.matches)) return;
+                c.scripted = true; c.auto = true;
+                var p = v.play();
+                if (p && p.catch) p.catch(function () { c.scripted = false; c.auto = false; });
+            }
+            function stop(v) {
+                var c = v._clip;
+                if (!c.auto || v.paused) return;
+                c.scripted = true; c.auto = false;
+                v.pause();
             }
             if ("IntersectionObserver" in window) {
                 var io = new IntersectionObserver(function (entries) {
-                    entries.forEach(function (e) { if (e.isIntersecting) visible.add(e.target); else visible.delete(e.target); });
-                    sync();
-                }, { threshold: 0.35 });
-                videos.forEach(function (v) { io.observe(v); });
-            }
-            if (reduce) {
-                if (reduce.addEventListener) reduce.addEventListener("change", sync);
-                else if (reduce.addListener) reduce.addListener(sync);
+                    entries.forEach(function (e) { if (e.intersectionRatio >= 0.35) start(e.target); else stop(e.target); });
+                }, { threshold: [0, 0.35] });
+                clips.forEach(function (v) { io.observe(v); });
             }
         })();
     </script>

@@ -2,7 +2,7 @@
    Rhythm: parts (numbered, ruled) > h3 subsections > paragraphs/figures. One vertical gap scale. */
 :root {
     --before: #b3ada1;      /* warm grey: original model */
-    --after: #1a1a1a;       /* ink: edited model */
+    --after: var(--text);   /* ink: edited model */
     --cell: #ebe8df;        /* unchanged head */
     --rim: #a3472c;         /* the bin rim, the one warm accent */
     --gap-s: 0.75rem;
@@ -21,7 +21,7 @@
 /* ---------- Header ---------- */
 .article-head { display: flex; flex-direction: column; gap: var(--gap-s); }
 .article-title { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; color: var(--text); text-wrap: balance; }
-.article-meta { color: var(--text-muted); font-size: 0.8125rem; }
+.article .article-meta { color: var(--text-muted); font-size: 0.8125rem; }
 .lede { margin-top: var(--gap-s); }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line); margin-top: var(--gap-m); }
 .stat { padding: 1rem 1rem 1rem 0; display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
@@ -82,8 +82,17 @@ video { width: 100%; height: auto; display: block; background: var(--line); }
 .chart .label { fill: var(--text); }
 .chart .rim { stroke: var(--rim); stroke-width: 1.5; stroke-dasharray: 5 4; }
 .chart .rim-label { fill: var(--rim); }
-.chart .hit { fill: var(--after); }
+.chart .hit { fill: var(--rim); }      /* both bars are the original model; rust = the failing carries */
 .chart .normal { fill: var(--before); }
+
+/* Phone layout for the before/after clips: the side-by-side file is shown twice, each cropped to one half. */
+.compare-stack { display: none; }
+.crop-label { font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.crop-label.after { color: var(--text); font-weight: 700; }
+.half { width: 100%; height: auto; aspect-ratio: 640 / 356; object-fit: cover; display: block; background: var(--line); }
+.half.left { object-position: left center; }
+.half.right { object-position: right center; }
+.article .table-note { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; margin-top: calc(var(--gap-s) - var(--gap-m)); }
 
 /* ---------- Tables and bars ---------- */
 .tbl { overflow-x: auto; }
@@ -157,9 +166,12 @@ tr.used td { color: var(--text); font-weight: 700; }
     .dials { grid-template-columns: 1fr; }
     .dials li { padding-left: 0; }
     .dials li + li { border-left: 0; border-top: 1px solid var(--line); }
-    .video-labels .long { display: none; }
     .model-row { grid-template-columns: 1fr; }
     .grids { grid-template-columns: 1fr; }
+    .compare-wide { display: none; }
+    .compare-stack { display: flex; flex-direction: column; gap: 0.5rem; }
+    .compare-stack .crop-label.after { margin-top: 0.75rem; }
+    .chart svg text { font-size: 18px; }
     .roles { grid-template-columns: 1fr; }
     .roles dt { border-bottom: 0; padding-bottom: 0.1rem; }
     .roles dd { padding-top: 0; }

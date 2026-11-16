@@ -17,11 +17,14 @@
     <meta property="og:image" content="https://abdulrahimmirani.com/research/vla-weight-editing/media/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Side by side: the original π0.5 drags a bin off the table; the edited model has both yellow blocks in the bin.">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@rahim_mirani">
     <meta name="twitter:title" content="Directly editing a VLA's weights improved its performance, with no fine-tuning">
     <meta name="twitter:description" content="Four attention heads edited, no training. Colour sorting: 9/30 → 27/30.">
     <meta name="twitter:image" content="https://abdulrahimmirani.com/research/vla-weight-editing/media/og-image.jpg">
+    <meta name="twitter:image:alt" content="Side by side: the original π0.5 drags a bin off the table; the edited model has both yellow blocks in the bin.">
+    <meta name="author" content="Abdul Rahim Mirani">
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/research/vla-weight-editing/research.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,7 +58,7 @@
 
                 <div class="tasks">
                     <div class="task">
-                        <img src="/research/vla-weight-editing/media/scene-sorting.jpg" width="864" height="480" alt="Colour sorting scene: two grey bins on a wooden table with two blue and two yellow blocks between them" loading="lazy">
+                        <img src="/research/vla-weight-editing/media/scene-sorting.jpg" width="864" height="480" alt="Colour sorting scene: two grey bins on a wooden table with two blue and two yellow blocks between them" fetchpriority="high">
                         <div class="task-body">
                             <span class="task-name">Task 1 · Colour sorting</span>
                             <p class="task-prompt">“Put the blue blocks in the right bin and the yellow blocks in the left bin.”</p>
@@ -187,7 +190,7 @@
                 <ol class="dials">
                     <li><span class="n">1</span><b>Test each head</b><span>Opus 5.5 turned each head off, then doubled it, and measured one thing: how high the robot carries the block.</span></li>
                     <li><span class="n">2</span><b>Find the dials</b><span>Four heads act like a dial. Turn them down and the carry drops; turn them up and it rises. Grasping stays the same.</span></li>
-                    <li><span class="n">3</span><b>Turn them up</b><span>Multiplying all four by 3 raises the carry by 2–3 cm, enough to clear the rim.</span></li>
+                    <li><span class="n">3</span><b>Turn them up</b><span>Multiplying all four by 3 raises the carry by about 2.3 cm, enough to clear the rim.</span></li>
                 </ol>
                 <div class="tbl">
                     <table>
@@ -256,6 +259,9 @@
             }
             grid('heads-vlm', [[6, 4], [10, 7]]);
             grid('heads-act', [[13, 4], [14, 1]]);
+            if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                document.querySelectorAll("video[autoplay]").forEach(function (v) { v.removeAttribute("autoplay"); v.pause(); });
+            }
         })();
     </script>
 </body>

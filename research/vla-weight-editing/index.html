@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#faf9f5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Directly editing a VLA's weights improved its performance, with no fine-tuning — Abdul Rahim Mirani</title>
+    <meta name="description" content="Opus 5.5 diagnosed why the π0.5 robot policy fails at colour sorting and fixed it by editing four attention heads directly. No training, no fine-tuning: 9/30 → 27/30.">
+    <link rel="canonical" href="https://www.abdulrahimmirani.com/research/vla-weight-editing">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Directly editing a VLA's weights improved its performance, with no fine-tuning">
+    <meta property="og:description" content="Opus 5.5 found why π0.5 fails at colour sorting and fixed it by editing four attention heads. No training: 9/30 → 27/30.">
+    <meta property="og:url" content="https://www.abdulrahimmirani.com/research/vla-weight-editing">
+    <meta property="og:image" content="https://www.abdulrahimmirani.com/research/vla-weight-editing/media/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Side by side: the original π0.5 drags a bin off the table; the edited model has both yellow blocks in the bin.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@rahim_mirani">
+    <meta name="twitter:title" content="Directly editing a VLA's weights improved its performance, with no fine-tuning">
+    <meta name="twitter:description" content="Four attention heads edited, no training. Colour sorting: 9/30 → 27/30.">
+    <meta name="twitter:image" content="https://www.abdulrahimmirani.com/research/vla-weight-editing/media/og-image.jpg">
+    <meta name="twitter:image:alt" content="Side by side: the original π0.5 drags a bin off the table; the edited model has both yellow blocks in the bin.">
+    <meta name="author" content="Abdul Rahim Mirani">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/research/vla-weight-editing/research.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body>
+    <main>
+        <a href="/" class="back-link">Home</a>
+
+        <article class="article">
+            <header class="article-head">
+                <h1 class="article-title">Directly editing a VLA's weights improved its performance, with no fine-tuning</h1>
+                <p class="article-meta">Abdul Rahim Mirani · November 2026</p>
+                <p class="lede">I ran the π0.5 DROID policy on two manipulation tasks in simulation. Opus 5.5 analysed why it fails at sorting blocks and fixed it by changing its weights directly. No training and no fine-tuning: four attention heads were turned up 3×. Sorting went from 9 to 27 successes out of 30, and a second task the edit was never designed for got better too.</p>
+                <div class="stats">
+                    <div class="stat"><span class="stat-label">Colour sorting</span><span class="stat-value"><span class="was">9</span> → 27</span><span class="stat-note">successes out of 30</span></div>
+                    <div class="stat"><span class="stat-label">Cups in basket</span><span class="stat-value"><span class="was">20</span> → 27</span><span class="stat-note">not used to design the edit</span></div>
+                    <div class="stat"><span class="stat-label">Weights changed</span><span class="stat-value">0.05%</span><span class="stat-note">4 heads, no training</span></div>
+                </div>
+            </header>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">01</span><h2>Setup</h2></div>
+                <p>The policy is the public <code>pi05_droid_jointpos</code> checkpoint, used exactly as released. Both tasks run in Isaac Sim with a Franka arm, a Robotiq gripper and DROID's two cameras, one over the shoulder and one on the wrist. Objects are placed slightly differently in every episode.</p>
+
+                <div class="tasks">
+                    <div class="task">
+                        <img src="/research/vla-weight-editing/media/scene-sorting.jpg" width="864" height="480" alt="Colour sorting scene: two grey bins on a wooden table with two blue and two yellow blocks between them">
+                        <div class="task-body">
+                            <span class="task-name">Task 1 · Colour sorting</span>
+                            <p class="task-prompt">“Put the blue blocks in the right bin and the yellow blocks in the left bin.”</p>
+                            <dl>
+                                <dt>Objects</dt><dd>4 blocks, 2 movable bins 10.5 cm tall</dd>
+                                <dt>Success</dt><dd>every block in its own bin</dd>
+                                <dt>Time limit</dt><dd>120 s</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="task">
+                        <img src="/research/vla-weight-editing/media/scene-cups.jpg" width="864" height="480" alt="Cups scene: a black basket, two white cups, white boxes, a carton, a bowl and bananas on a wooden table" loading="lazy">
+                        <div class="task-body">
+                            <span class="task-name">Task 2 · Cups in basket</span>
+                            <p class="task-prompt">“Put both white cups into the basket.”</p>
+                            <dl>
+                                <dt>Objects</dt><dd>2 cups, a basket, 7 other objects</dd>
+                                <dt>Success</dt><dd>both cups in the basket</dd>
+                                <dt>Time limit</dt><dd>60 s</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>The process</h3>
+                <ol class="steps">
+                    <li><span class="n">1</span><b>Run the original model</b><span>on both tasks</span></li>
+                    <li><span class="n">2</span><b>Diagnose Task 1</b><span>watch the failures, measure what goes wrong</span></li>
+                    <li class="key"><span class="n">3</span><b>Edit the weights</b><span>using Task 1 only</span></li>
+                    <li><span class="n">4</span><b>Run the edited model</b><span>on both tasks, same 30 placements</span></li>
+                </ol>
+                <p class="callout">The edit was designed using only the colour-sorting task. The cups task played no part in it and was only measured at the end. All before and after results in the Results section come from 30 object placements per task that were not used while designing the edit.</p>
+
+                <h3>Who did what</h3>
+                <dl class="roles">
+                    <dt>Me</dt>
+                    <dd>Set the question, chose the two tasks, decided to focus on sorting, and reviewed the results.</dd>
+                    <dt>Opus 5.5</dt>
+                    <dd>Watched the failures and found the cause, designed and ran every experiment, chose the four heads, edited the weights, and ran the before and after tests. It made the edit by writing and running code that tried candidate changes and applied the one it chose.</dd>
+                </dl>
+            </section>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">02</span><h2>Results</h2></div>
+
+                <h3>Task 1 · Colour sorting</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model drags the left bin off the table; the edited model sorts all four blocks"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model drags the left bin off the table"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model sorts all four blocks"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model catches the bin rim with the second yellow block and drags the bin off the table. After: the edited model lifts higher and sorts all four blocks in 29 s.</figcaption>
+                </figure>
+                <div class="results">
+                    <div class="bars">
+                        <div class="bar-group">
+                            <div class="bar-title">Successful episodes (out of 30)</div>
+                            <div class="bar-row"><span>Before</span><div class="bar-track"><div class="bar-fill before" style="--v:9"></div></div><span class="v">9</span></div>
+                            <div class="bar-row"><span>After</span><div class="bar-track"><div class="bar-fill after" style="--v:27"></div></div><span class="v">27</span></div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar-title">Episodes where a bin was knocked off (out of 30)</div>
+                            <div class="bar-row"><span>Before</span><div class="bar-track"><div class="bar-fill before" style="--v:16"></div></div><span class="v">16</span></div>
+                            <div class="bar-row"><span>After</span><div class="bar-track"><div class="bar-fill after" style="--v:0"></div></div><span class="v">0</span></div>
+                        </div>
+                    </div>
+                    <div class="tbl">
+                        <table>
+                            <thead><tr><th>Colour sorting · 30 episodes</th><th class="num">Before</th><th class="num">After</th></tr></thead>
+                            <tbody>
+                                <tr><td>Successful episodes</td><td class="num">9</td><td class="num after">27</td></tr>
+                                <tr><td>Blocks sorted, average out of 4</td><td class="num">2.9</td><td class="num after">3.9</td></tr>
+                                <tr><td>Episodes with a bin knocked off</td><td class="num">16</td><td class="num after">0</td></tr>
+                                <tr><td>Typical time of a successful episode</td><td class="num">40 s</td><td class="num after">31 s</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h3>Task 2 · Cups in basket</h3>
+                <p>This task was not used at all while designing the edit; it was run at the end only to check nothing broke. It improved instead. Cups are carried higher, as with the blocks, and episodes finish sooner. The gain is smaller than on Task 1.</p>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model knocks the second cup over; the edited model places both cups"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model knocks the second cup over"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model places both cups"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model knocks the second cup over and runs out of time. After: the edited model carries both cups high and finishes in 24 s.</figcaption>
+                </figure>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Cups in basket · 30 episodes</th><th class="num">Before</th><th class="num">After</th></tr></thead>
+                        <tbody>
+                            <tr><td>Successful episodes</td><td class="num">20</td><td class="num after">27</td></tr>
+                            <tr><td>Average episode time</td><td class="num">44 s</td><td class="num after">32 s</td></tr>
+                            <tr><td>How high cups are carried (typical)</td><td class="num">23.5 cm</td><td class="num after">28.6 cm</td></tr>
+                            <tr><td>Episodes where the robot grabbed another object</td><td class="num">12</td><td class="num">12</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>The robot still sometimes picks up a white box instead of a cup; the edit does not change that.</p>
+            </section>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">03</span><h2>How Opus 5.5 found the fix</h2></div>
+
+                <h3>The problem: blocks are carried too low</h3>
+                <p>Opus 5.5 first checked whether the model mixes up the colours. It doesn't: when both bins are on the table it puts almost every block in the right one. The real failure is mechanical. The robot carries the block low, the gripper catches the rim of the bin, and the arm drags the whole bin off the table. After that the task can't be finished.</p>
+                <figure class="chart">
+                    <svg viewBox="0 0 600 262" role="img" aria-label="Peak block height during carries. Carries that hit a bin peaked at 8 to 12 cm; normal carries at 11 to 15 cm. The bin rim is at 10.5 cm.">
+                        <g class="ticks" font-size="11"><title>Height in cm</title>
+                            <line class="axis" x1="52" y1="210" x2="590" y2="210"/>
+                            <text x="44" y="214" text-anchor="end">0</text>
+                            <line x1="52" y1="160" x2="590" y2="160" class="grid"/><text x="44" y="164" text-anchor="end">4</text>
+                            <line x1="52" y1="110" x2="590" y2="110" class="grid"/><text x="44" y="114" text-anchor="end">8</text>
+                            <line x1="52" y1="60" x2="590" y2="60" class="grid"/><text x="44" y="64" text-anchor="end">12</text>
+                            <line x1="52" y1="10" x2="590" y2="10" class="grid"/><text x="44" y="14" text-anchor="end">16</text>
+                        </g>
+                        <line class="rim" x1="52" y1="78.75" x2="590" y2="78.75"/>
+                        <text class="rim-label" x="590" y="96" text-anchor="end" font-size="11">bin rim · 10.5 cm</text>
+                        <rect class="hit" x="150" y="60" width="96" height="50"><title>Carries that hit a bin: block peaked 8–12 cm above its start</title></rect>
+                        <text x="198" y="230" text-anchor="middle" font-size="11" class="label">carries that hit a bin</text>
+                        <text x="198" y="252" text-anchor="middle" font-size="11" class="sub">8–12 cm</text>
+                        <rect class="normal" x="360" y="22.5" width="96" height="50"><title>Normal carries: block peaked 11–15 cm above its start</title></rect>
+                        <text x="408" y="230" text-anchor="middle" font-size="11" class="label">normal carries</text>
+                        <text x="408" y="252" text-anchor="middle" font-size="11" class="sub">11–15 cm</text>
+                    </svg>
+                    <figcaption>Peak height of the block, in cm, above where it started on the table, for each carry by the original model. The carries that hit a bin barely reach the rim.</figcaption>
+                </figure>
+                <p>So the fix is simple to state: <strong>carry the block higher, without changing how the robot grasps.</strong></p>
+
+                <h3>The fix: four “lift higher” dials</h3>
+                <p>π0.5 is built from many small parts called attention heads, 288 of them in total. Each one adds its own small contribution to the robot's next move.</p>
+                <ol class="dials">
+                    <li><span class="n">1</span><b>Test each head</b><span>Opus 5.5 turned each head off, then doubled it, and measured one thing: how high the robot carries the block.</span></li>
+                    <li><span class="n">2</span><b>Find the dials</b><span>Four heads act like a dial. Turn them down and the carry drops; turn them up and it rises. Grasping stays the same.</span></li>
+                    <li><span class="n">3</span><b>Turn them up</b><span>Multiplying all four by 3 raises the carry by about 2.3 cm on average, which lifts most carries clear of the rim. In the full tests no bin was knocked off in 30 episodes.</span></li>
+                </ol>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Four heads turned up</th><th class="num">Carry height</th><th class="num">Grasp height</th></tr></thead>
+                        <tbody>
+                            <tr><td>×2</td><td class="num">+1.4 cm</td><td class="num">no change</td></tr>
+                            <tr class="used"><td>×3 (used)</td><td class="num">+2.3 cm</td><td class="num">no change</td></tr>
+                            <tr><td>×4</td><td class="num">+3.0 cm</td><td class="num">starts to change</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="table-note">Measured while designing the edit, on recorded inputs from the original model. The test results are in the Results section above.</p>
+                <p>This changes 1.57 million of the model's 3.35 billion weights. The edited model is saved as an ordinary checkpoint and runs with the standard code, with no extra hooks at inference. The tests show what these heads do to the robot's movement; why the model computes it this way internally is a separate question.</p>
+
+                <h3>Where the edit lives in π0.5</h3>
+                <p>π0.5 is two connected transformers. A large one (2B parameters) reads the camera images, the instruction and the robot's joint positions. A small one (300M, the “action expert”) reads what the large one produced and outputs the next second of movement. Each has 18 layers with 8 heads per layer. Two of the edited heads are in each.</p>
+                <div class="model">
+                    <div class="model-row">
+                        <div class="box"><b>Shoulder camera</b>image → 256 tokens</div>
+                        <div class="box"><b>Wrist camera</b>image → 256 tokens</div>
+                        <div class="box"><b>Text</b>instruction + joint positions</div>
+                    </div>
+                    <div class="down">↓</div>
+                    <div class="box edited"><b>Vision-language model · 2B · 18 layers × 8 heads</b>edited: <span class="mark">layer 6 head 4</span>, <span class="mark">layer 10 head 7</span></div>
+                    <div class="down">↓</div>
+                    <div class="box edited"><b>Action expert · 300M · 18 layers × 8 heads</b>edited: <span class="mark">layer 13 head 4</span>, <span class="mark">layer 14 head 1</span></div>
+                    <div class="down">↓</div>
+                    <div class="box"><b>Next second of movement</b>15 steps of 7 joint targets + gripper</div>
+                </div>
+                <div class="grids">
+                    <div class="grid-card"><span class="grid-title">Vision-language model heads</span><div class="heads" id="heads-vlm" role="img" aria-label="Grid of 18 layers by 8 heads; layer 6 head 4 and layer 10 head 7 are edited"></div></div>
+                    <div class="grid-card"><span class="grid-title">Action expert heads</span><div class="heads" id="heads-act" role="img" aria-label="Grid of 18 layers by 8 heads; layer 13 head 4 and layer 14 head 1 are edited"></div></div>
+                </div>
+                <div class="legend"><span><i class="sw edited"></i>edited (output ×3)</span><span><i class="sw unchanged"></i>unchanged</span></div>
+                <noscript><p>Edited heads: vision-language model layer 6 head 4 and layer 10 head 7; action expert layer 13 head 4 and layer 14 head 1.</p></noscript>
+            </section>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">04</span><h2>Limits</h2></div>
+                <ul class="plain-list">
+                    <li>One scene per task, in simulation. Other scenes and a real robot are untested.</li>
+                    <li>The edited model sometimes puts a blue block in the wrong bin: 4 blocks across its 3 failed sorting episodes. The original rarely did this while both bins were on the table.</li>
+                    <li>Opus 5.5 found the heads by testing many candidates against one measurement, not by guessing in one shot.</li>
+                </ul>
+            </section>
+
+            <footer class="credits">
+                <p>Inspired by <a href="https://rikiyat.github.io/blog/weight-space-programming/" target="_blank" rel="noopener noreferrer">Weight-Space Programming</a>. Model: π0.5 and <a href="https://github.com/Physical-Intelligence/openpi" target="_blank" rel="noopener noreferrer">openpi</a> by Physical Intelligence. The colour-sorting scene is built from <a href="https://research.nvidia.com/labs/srl/projects/robolab" target="_blank" rel="noopener noreferrer">RoboLab</a>'s two-bin scene and blocks; the cups scene is a custom scene. Simulation in NVIDIA Isaac Sim and Isaac Lab.</p>
+            </footer>
+        </article>
+    </main>
+
+    <script>
+        (function () {
+            function grid(id, edited) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var html = '<span></span>';
+                for (var c = 0; c < 8; c++) html += '<span class="col">' + c + '</span>';
+                for (var layer = 0; layer < 18; layer++) {
+                    html += '<span>L' + layer + '</span>';
+                    for (var head = 0; head < 8; head++) {
+                        var on = edited.some(function (p) { return p[0] === layer && p[1] === head; });
+                        html += '<i' + (on ? ' class="on"' : '') + ' title="layer ' + layer + ' head ' + head + (on ? ': output ×3' : '') + '"></i>';
+                    }
+                }
+                el.innerHTML = html;
+            }
+            grid('heads-vlm', [[6, 4], [10, 7]]);
+            grid('heads-act', [[13, 4], [14, 1]]);
+
+            // Before/after clips: start automatically when at least 35% is on screen, and pause again when they've
+            // scrolled away, but only if the script started them. A clip the visitor paused stays paused while it is
+            // on screen; one they started keeps playing. With reduced motion preferred, nothing starts automatically.
+            var reduce = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+            var clips = Array.prototype.slice.call(document.querySelectorAll("video[data-autoplay]"));
+            clips.forEach(function (v) {
+                v._clip = { auto: false, userPaused: false, ownPlay: 0, ownPause: 0 };
+                v.addEventListener("pause", function () {
+                    var c = v._clip;
+                    if (c.ownPause > 0) { c.ownPause--; return; }
+                    c.userPaused = true; c.auto = false;   // paused by the visitor (or the browser) while on screen
+                });
+                v.addEventListener("play", function () {
+                    var c = v._clip;
+                    if (c.ownPlay > 0) { c.ownPlay--; return; }
+                    c.userPaused = false;
+                });
+            });
+            function start(v) {
+                var c = v._clip;
+                if (c.userPaused || !v.paused || (reduce && reduce.matches)) return;
+                c.ownPlay++; c.auto = true;
+                var p = v.play();
+                if (p && p.catch) p.catch(function () { if (c.ownPlay > 0) c.ownPlay--; c.auto = false; });
+            }
+            function stop(v) {
+                var c = v._clip;
+                c.userPaused = false;   // a pause only holds while the clip stays on screen
+                if (!c.auto || v.paused) return;
+                c.ownPause++; c.auto = false;
+                v.pause();
+            }
+            if ("IntersectionObserver" in window) {
+                var io = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (e) { if (e.intersectionRatio >= 0.35) start(e.target); else stop(e.target); });
+                }, { threshold: [0, 0.35] });
+                clips.forEach(function (v) { io.observe(v); });
+            }
+        })();
+    </script>
+</body>
+</html>

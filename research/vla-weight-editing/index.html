@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+                var c = v._clip;
+                c.userPaused = false;   // a pause only holds while the clip stays on screen
+                if (!c.auto || v.paused) return;
+                c.ownPause++; c.auto = false;
+                v.pause();<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -116,7 +120,7 @@
                         <span class="crop-label after">After · 4 heads ×3</span>
                         <video class="half right" src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model sorts all four blocks"></video>
                     </div>
-                    <figcaption>Same object placement, played at 2× speed. Left: the original model catches the bin rim with the second yellow block and drags the bin off the table. Right: the edited model lifts higher and sorts all four blocks in 29 s.</figcaption>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model catches the bin rim with the second yellow block and drags the bin off the table. After: the edited model lifts higher and sorts all four blocks in 29 s.</figcaption>
                 </figure>
                 <div class="results">
                     <div class="bars">
@@ -157,7 +161,7 @@
                         <span class="crop-label after">After · 4 heads ×3</span>
                         <video class="half right" src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model places both cups"></video>
                     </div>
-                    <figcaption>Same object placement, played at 2× speed. Left: the original model knocks the second cup over and runs out of time. Right: the edited model carries both cups high and finishes in 24 s.</figcaption>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model knocks the second cup over and runs out of time. After: the edited model carries both cups high and finishes in 24 s.</figcaption>
                 </figure>
                 <div class="tbl">
                     <table>
@@ -180,24 +184,24 @@
                 <p>Opus 5.5 first checked whether the model mixes up the colours. It doesn't: when both bins are on the table it puts almost every block in the right one. The real failure is mechanical. The robot carries the block low, the gripper catches the rim of the bin, and the arm drags the whole bin off the table. After that the task can't be finished.</p>
                 <figure class="chart">
                     <svg viewBox="0 0 600 262" role="img" aria-label="Peak block height during carries. Carries that hit a bin peaked at 8 to 12 cm; normal carries at 11 to 15 cm. The bin rim is at 10.5 cm.">
-                        <g class="ticks" font-size="11">
+                        <g class="ticks" font-size="11"><title>Height in cm</title>
                             <line class="axis" x1="52" y1="210" x2="590" y2="210"/>
                             <text x="44" y="214" text-anchor="end">0</text>
                             <line x1="52" y1="160" x2="590" y2="160" class="grid"/><text x="44" y="164" text-anchor="end">4</text>
                             <line x1="52" y1="110" x2="590" y2="110" class="grid"/><text x="44" y="114" text-anchor="end">8</text>
                             <line x1="52" y1="60" x2="590" y2="60" class="grid"/><text x="44" y="64" text-anchor="end">12</text>
-                            <line x1="52" y1="10" x2="590" y2="10" class="grid"/><text x="44" y="14" text-anchor="end">16 cm</text>
+                            <line x1="52" y1="10" x2="590" y2="10" class="grid"/><text x="44" y="14" text-anchor="end">16</text>
                         </g>
                         <line class="rim" x1="52" y1="78.75" x2="590" y2="78.75"/>
                         <text class="rim-label" x="590" y="96" text-anchor="end" font-size="11">bin rim · 10.5 cm</text>
                         <rect class="hit" x="150" y="60" width="96" height="50"><title>Carries that hit a bin: block peaked 8–12 cm above its start</title></rect>
                         <text x="198" y="230" text-anchor="middle" font-size="11" class="label">carries that hit a bin</text>
-                        <text x="198" y="245" text-anchor="middle" font-size="11" class="sub">8–12 cm</text>
+                        <text x="198" y="252" text-anchor="middle" font-size="11" class="sub">8–12 cm</text>
                         <rect class="normal" x="360" y="22.5" width="96" height="50"><title>Normal carries: block peaked 11–15 cm above its start</title></rect>
                         <text x="408" y="230" text-anchor="middle" font-size="11" class="label">normal carries</text>
-                        <text x="408" y="245" text-anchor="middle" font-size="11" class="sub">11–15 cm</text>
+                        <text x="408" y="252" text-anchor="middle" font-size="11" class="sub">11–15 cm</text>
                     </svg>
-                    <figcaption>Peak height of the block above where it started on the table, for each carry by the original model. The carries that hit a bin barely reach the rim.</figcaption>
+                    <figcaption>Peak height of the block, in cm, above where it started on the table, for each carry by the original model. The carries that hit a bin barely reach the rim.</figcaption>
                 </figure>
                 <p>So the fix is simple to state: <strong>carry the block higher, without changing how the robot grasps.</strong></p>
 
@@ -206,7 +210,7 @@
                 <ol class="dials">
                     <li><span class="n">1</span><b>Test each head</b><span>Opus 5.5 turned each head off, then doubled it, and measured one thing: how high the robot carries the block.</span></li>
                     <li><span class="n">2</span><b>Find the dials</b><span>Four heads act like a dial. Turn them down and the carry drops; turn them up and it rises. Grasping stays the same.</span></li>
-                    <li><span class="n">3</span><b>Turn them up</b><span>Multiplying all four by 3 raises the carry by about 2.3 cm on average. In the full tests that was enough: no bin was knocked off in 30 episodes.</span></li>
+                    <li><span class="n">3</span><b>Turn them up</b><span>Multiplying all four by 3 raises the carry by about 2.3 cm on average, which lifts most carries clear of the rim. In the full tests no bin was knocked off in 30 episodes.</span></li>
                 </ol>
                 <div class="tbl">
                     <table>
@@ -241,6 +245,7 @@
                     <div class="grid-card"><span class="grid-title">Action expert heads</span><div class="heads" id="heads-act" role="img" aria-label="Grid of 18 layers by 8 heads; layer 13 head 4 and layer 14 head 1 are edited"></div></div>
                 </div>
                 <div class="legend"><span><i class="sw edited"></i>edited (output ×3)</span><span><i class="sw unchanged"></i>unchanged</span></div>
+                <noscript><p>Edited heads: vision-language model layer 6 head 4 and layer 10 head 7; action expert layer 13 head 4 and layer 14 head 1.</p></noscript>
             </section>
 
             <section class="part">
@@ -278,26 +283,35 @@
             grid('heads-act', [[13, 4], [14, 1]]);
 
             // Before/after clips: start automatically when at least 35% is on screen, and pause again when they've
-            // scrolled away, but only if the script started them. A clip the visitor paused stays paused; one they
-            // started keeps playing. With reduced motion preferred, nothing starts automatically.
+            // scrolled away, but only if the script started them. A clip the visitor paused stays paused while it is
+            // on screen; one they started keeps playing. With reduced motion preferred, nothing starts automatically.
             var reduce = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
             var clips = Array.prototype.slice.call(document.querySelectorAll("video[data-autoplay]"));
             clips.forEach(function (v) {
-                v._clip = { auto: false, userPaused: false, scripted: false };
-                v.addEventListener("pause", function () { if (!v._clip.scripted) { v._clip.userPaused = true; v._clip.auto = false; } v._clip.scripted = false; });
-                v.addEventListener("play", function () { if (!v._clip.scripted) v._clip.userPaused = false; v._clip.scripted = false; });
+                v._clip = { auto: false, userPaused: false, ownPlay: 0, ownPause: 0 };
+                v.addEventListener("pause", function () {
+                    var c = v._clip;
+                    if (c.ownPause > 0) { c.ownPause--; return; }
+                    c.userPaused = true; c.auto = false;   // paused by the visitor (or the browser) while on screen
+                });
+                v.addEventListener("play", function () {
+                    var c = v._clip;
+                    if (c.ownPlay > 0) { c.ownPlay--; return; }
+                    c.userPaused = false;
+                });
             });
             function start(v) {
                 var c = v._clip;
                 if (c.userPaused || !v.paused || (reduce && reduce.matches)) return;
-                c.scripted = true; c.auto = true;
+                c.ownPlay++; c.auto = true;
                 var p = v.play();
-                if (p && p.catch) p.catch(function () { c.scripted = false; c.auto = false; });
+                if (p && p.catch) p.catch(function () { if (c.ownPlay > 0) c.ownPlay--; c.auto = false; });
             }
             function stop(v) {
                 var c = v._clip;
+                c.userPaused = false;   // a pause only holds while the clip stays on screen
                 if (!c.auto || v.paused) return;
-                c.scripted = true; c.auto = false;
+                c.ownPause++; c.auto = false;
                 v.pause();
             }
             if ("IntersectionObserver" in window) {

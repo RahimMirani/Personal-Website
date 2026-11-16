@@ -7,11 +7,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Opus 5.5 directly edited π0.5's weights and improved its performance, with no fine-tuning — Abdul Rahim Mirani</title>
+    <title>Directly editing a VLA's weights improved its performance, with no fine-tuning — Abdul Rahim Mirani</title>
     <meta name="description" content="Opus 5.5 diagnosed why the π0.5 robot policy fails at colour sorting and fixed it by editing four attention heads directly. No training, no fine-tuning: 9/30 → 27/30.">
     <link rel="canonical" href="https://abdulrahimmirani.com/research/vla-weight-editing">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="Opus 5.5 directly edited π0.5's weights and improved its performance, with no fine-tuning">
+    <meta property="og:title" content="Directly editing a VLA's weights improved its performance, with no fine-tuning">
     <meta property="og:description" content="Opus 5.5 found why π0.5 fails at colour sorting and fixed it by editing four attention heads. No training: 9/30 → 27/30.">
     <meta property="og:url" content="https://abdulrahimmirani.com/research/vla-weight-editing">
     <meta property="og:image" content="https://abdulrahimmirani.com/research/vla-weight-editing/media/og-image.jpg">
@@ -19,7 +19,7 @@
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@rahim_mirani">
-    <meta name="twitter:title" content="Opus 5.5 directly edited π0.5's weights and improved its performance, with no fine-tuning">
+    <meta name="twitter:title" content="Directly editing a VLA's weights improved its performance, with no fine-tuning">
     <meta name="twitter:description" content="Four attention heads edited, no training. Colour sorting: 9/30 → 27/30.">
     <meta name="twitter:image" content="https://abdulrahimmirani.com/research/vla-weight-editing/media/og-image.jpg">
     <link rel="stylesheet" href="/style.css">
@@ -39,9 +39,9 @@
 
         <article class="article">
             <header class="article-head">
-                <h1 class="article-title">Opus 5.5 directly edited π0.5's weights and improved its performance, with no fine-tuning</h1>
+                <h1 class="article-title">Directly editing a VLA's weights improved its performance, with no fine-tuning</h1>
                 <p class="article-meta">Abdul Rahim Mirani · November 2026</p>
-                <p class="lede">I asked Claude Opus 5.5 to find out why the π0.5 robot policy fails at a colour-sorting task in simulation, and to fix it by editing the model's weights directly: no training, no fine-tuning. Opus 5.5 found that the robot carries blocks too low and knocks the bins off the table, traced the behaviour to four attention heads, and turned them up 3×. Sorting went from 9 to 27 successes out of 30. A second task, which Opus 5.5 never used while designing the edit, improved too.</p>
+                <p class="lede">I ran the π0.5 DROID policy on two manipulation tasks in simulation. Opus 5.5 analysed why it fails at sorting blocks and fixed it by changing its weights directly. No training and no fine-tuning: four attention heads were turned up 3×. Sorting went from 9 to 27 successes out of 30, and a second task the edit was never designed for got better too.</p>
                 <div class="stats">
                     <div class="stat"><span class="stat-label">Colour sorting</span><span class="stat-value"><span class="was">9</span> → 27</span><span class="stat-note">successes out of 30</span></div>
                     <div class="stat"><span class="stat-label">Cups in basket</span><span class="stat-value"><span class="was">20</span> → 27</span><span class="stat-note">not used to design the edit</span></div>

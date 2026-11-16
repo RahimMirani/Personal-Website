@@ -8,7 +8,8 @@
     --gap-s: 0.75rem;
     --gap-m: 1.25rem;
     --gap-l: 2.25rem;
-    --wide: min(62rem, calc(100vw - 3rem));
+    /* wide figures: up to 62rem, keeping 1.5rem plus any safe-area inset clear on each side */
+    --wide: min(62rem, calc(100vw - 3rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
 }
 
 .article { display: flex; flex-direction: column; }
@@ -75,6 +76,14 @@ figcaption { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; mar
 video { width: 100%; height: auto; display: block; background: var(--line); }
 .chart svg { width: 100%; height: auto; display: block; }
 .chart text { font-family: var(--font-mono); }
+.chart .axis { stroke: var(--text); }
+.chart .grid { stroke: var(--line); }
+.chart .ticks, .chart .sub { fill: var(--text-muted); }
+.chart .label { fill: var(--text); }
+.chart .rim { stroke: var(--rim); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.chart .rim-label { fill: var(--rim); }
+.chart .hit { fill: var(--after); }
+.chart .normal { fill: var(--before); }
 
 /* ---------- Tables and bars ---------- */
 .tbl { overflow-x: auto; }
@@ -92,7 +101,7 @@ tr.used td { color: var(--text); font-weight: 700; }
 .bar-title { font-size: 0.75rem; color: var(--text); margin-bottom: 0.15rem; }
 .bar-row { display: grid; grid-template-columns: 4rem 1fr 2rem; gap: 0.75rem; align-items: center; font-size: 0.75rem; color: var(--text-muted); }
 .bar-track { height: 10px; background: var(--cell); position: relative; }
-.bar-fill { position: absolute; inset: 0 auto 0 0; }
+.bar-fill { position: absolute; inset: 0 auto 0 0; width: calc(var(--v, 0) / 30 * 100%); } /* --v = episodes out of 30 */
 .bar-fill.before { background: var(--before); }
 .bar-fill.after { background: var(--after); }
 .bar-row .v { text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
@@ -115,12 +124,20 @@ tr.used td { color: var(--text); font-weight: 700; }
 .heads i.on { background: var(--after); }
 .legend { display: flex; flex-wrap: wrap; gap: 1.25rem; font-size: 0.75rem; color: var(--text-muted); }
 .sw { display: inline-block; width: 10px; height: 10px; margin-right: 0.4rem; vertical-align: -1px; }
+.sw.edited { background: var(--after); }
+.sw.unchanged { background: var(--cell); }
 
 .plain-list { padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; }
 .plain-list li { color: var(--text-secondary); font-size: 0.875rem; line-height: 1.65; }
 
 .credits { margin-top: 4rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .article .credits p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.7; }
+
+/* ---------- Who did what ---------- */
+.roles { display: grid; grid-template-columns: 6.5rem 1fr; border-top: 1px solid var(--line); margin: 0; }
+.roles dt, .roles dd { padding: 0.8rem 0; border-bottom: 1px solid var(--line); font-size: 0.875rem; line-height: 1.65; }
+.roles dt { color: var(--text); font-weight: 700; }
+.roles dd { margin: 0; color: var(--text-secondary); }
 
 /* ---------- Narrow screens ---------- */
 @media (max-width: 760px) {
@@ -138,19 +155,11 @@ tr.used td { color: var(--text); font-weight: 700; }
     .steps li:nth-child(3) { padding-left: 0; border-left: 0; }
     .steps li:nth-child(n+3) { border-top: 1px solid var(--line); }
     .dials { grid-template-columns: 1fr; }
-    .video-labels .long { display: none; }
     .dials li { padding-left: 0; }
     .dials li + li { border-left: 0; border-top: 1px solid var(--line); }
+    .video-labels .long { display: none; }
     .model-row { grid-template-columns: 1fr; }
     .grids { grid-template-columns: 1fr; }
-}
-
-/* ---------- Who did what ---------- */
-.roles { display: grid; grid-template-columns: 6.5rem 1fr; border-top: 1px solid var(--line); margin: 0; }
-.roles dt, .roles dd { padding: 0.8rem 0; border-bottom: 1px solid var(--line); font-size: 0.875rem; line-height: 1.65; }
-.roles dt { color: var(--text); font-weight: 700; }
-.roles dd { margin: 0; color: var(--text-secondary); }
-@media (max-width: 640px) {
     .roles { grid-template-columns: 1fr; }
     .roles dt { border-bottom: 0; padding-bottom: 0.1rem; }
     .roles dd { padding-top: 0; }

@@ -7,20 +7,20 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Fixing a robot policy by editing 4 attention heads — Abdul Rahim Mirani</title>
-    <meta name="description" content="A direct weight edit to π0.5, no training: four attention heads turned up 3×. Colour sorting in simulation went from 9/30 to 27/30.">
+    <title>Opus 5.5 directly edited π0.5's weights and improved its performance, with no fine-tuning — Abdul Rahim Mirani</title>
+    <meta name="description" content="Opus 5.5 diagnosed why the π0.5 robot policy fails at colour sorting and fixed it by editing four attention heads directly. No training, no fine-tuning: 9/30 → 27/30.">
     <link rel="canonical" href="https://abdulrahimmirani.com/research/vla-weight-editing">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="Fixing a robot policy by editing 4 attention heads">
-    <meta property="og:description" content="A direct weight edit to π0.5, no training: four attention heads turned up 3×. Colour sorting went from 9/30 to 27/30.">
+    <meta property="og:title" content="Opus 5.5 directly edited π0.5's weights and improved its performance, with no fine-tuning">
+    <meta property="og:description" content="Opus 5.5 found why π0.5 fails at colour sorting and fixed it by editing four attention heads. No training: 9/30 → 27/30.">
     <meta property="og:url" content="https://abdulrahimmirani.com/research/vla-weight-editing">
     <meta property="og:image" content="https://abdulrahimmirani.com/research/vla-weight-editing/media/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@rahim_mirani">
-    <meta name="twitter:title" content="Fixing a robot policy by editing 4 attention heads">
-    <meta name="twitter:description" content="A direct weight edit to π0.5, no training. Colour sorting: 9/30 → 27/30.">
+    <meta name="twitter:title" content="Opus 5.5 directly edited π0.5's weights and improved its performance, with no fine-tuning">
+    <meta name="twitter:description" content="Four attention heads edited, no training. Colour sorting: 9/30 → 27/30.">
     <meta name="twitter:image" content="https://abdulrahimmirani.com/research/vla-weight-editing/media/og-image.jpg">
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/research/vla-weight-editing/research.css">
@@ -39,9 +39,9 @@
 
         <article class="article">
             <header class="article-head">
-                <h1 class="article-title">Fixing a robot policy by editing 4 attention heads</h1>
+                <h1 class="article-title">Opus 5.5 directly edited π0.5's weights and improved its performance, with no fine-tuning</h1>
                 <p class="article-meta">Abdul Rahim Mirani · November 2026</p>
-                <p class="lede">I ran the π0.5 DROID policy on two manipulation tasks in simulation, found why it fails at sorting blocks, and fixed it by changing its weights directly. No training and no fine-tuning: four attention heads were turned up 3×. Sorting went from 9 to 27 successes out of 30, and a second task the edit was never designed for got better too.</p>
+                <p class="lede">I asked Claude Opus 5.5 to find out why the π0.5 robot policy fails at a colour-sorting task in simulation, and to fix it by editing the model's weights directly: no training, no fine-tuning. Opus 5.5 found that the robot carries blocks too low and knocks the bins off the table, traced the behaviour to four attention heads, and turned them up 3×. Sorting went from 9 to 27 successes out of 30. A second task, which Opus 5.5 never used while designing the edit, improved too.</p>
                 <div class="stats">
                     <div class="stat"><span class="stat-label">Colour sorting</span><span class="stat-value"><span class="was">9</span> → 27</span><span class="stat-note">successes out of 30</span></div>
                     <div class="stat"><span class="stat-label">Cups in basket</span><span class="stat-value"><span class="was">20</span> → 27</span><span class="stat-note">not used to design the edit</span></div>
@@ -80,7 +80,7 @@
                     </div>
                 </div>
 
-                <h3>What I did</h3>
+                <h3>The process</h3>
                 <ol class="steps">
                     <li><span class="n">1</span><b>Run the original model</b><span>on both tasks</span></li>
                     <li><span class="n">2</span><b>Diagnose Task 1</b><span>watch the failures, measure what goes wrong</span></li>
@@ -88,56 +88,20 @@
                     <li><span class="n">4</span><b>Run the edited model</b><span>on both tasks, same 30 placements</span></li>
                 </ol>
                 <p class="callout">The edit was designed using only the colour-sorting task. The cups task played no part in it and was only measured at the end. All before and after numbers come from 30 object placements per task that were not used while designing the edit.</p>
+
+                <h3>Who did what</h3>
+                <dl class="roles">
+                    <dt>Me</dt>
+                    <dd>Set the question, chose the two tasks, decided to focus on sorting, and reviewed the results.</dd>
+                    <dt>Opus 5.5</dt>
+                    <dd>Watched the failures and found the cause, designed and ran every experiment, chose the four heads, edited the weights, and ran the before and after tests. It made the edit by writing and running code that tried candidate changes and applied the one it chose.</dd>
+                </dl>
             </section>
 
             <section class="part">
-                <div class="part-head"><span class="part-num">02</span><h2>Task 1 · Colour sorting</h2></div>
+                <div class="part-head"><span class="part-num">02</span><h2>Results</h2></div>
 
-                <h3>The problem: blocks are carried too low</h3>
-                <p>I expected the model to mix up the colours. It doesn't: when both bins are on the table it puts almost every block in the right one. The real failure is mechanical. The robot carries the block low, the gripper catches the rim of the bin, and the arm drags the whole bin off the table. After that the task can't be finished.</p>
-                <figure class="chart">
-                    <svg viewBox="0 0 600 250" role="img" aria-label="Peak block height during carries. Carries that hit a bin peaked at 8 to 12 cm; normal carries at 11 to 15 cm. The bin rim is at 10.5 cm.">
-                        <g font-size="11" fill="#8a867d">
-                            <line x1="52" y1="210" x2="590" y2="210" stroke="#1a1a1a"/>
-                            <text x="44" y="214" text-anchor="end">0</text>
-                            <line x1="52" y1="160" x2="590" y2="160" stroke="#e4e1d8"/><text x="44" y="164" text-anchor="end">4</text>
-                            <line x1="52" y1="110" x2="590" y2="110" stroke="#e4e1d8"/><text x="44" y="114" text-anchor="end">8</text>
-                            <line x1="52" y1="60" x2="590" y2="60" stroke="#e4e1d8"/><text x="44" y="64" text-anchor="end">12</text>
-                            <line x1="52" y1="10" x2="590" y2="10" stroke="#e4e1d8"/><text x="44" y="14" text-anchor="end">16 cm</text>
-                        </g>
-                        <line x1="52" y1="78.75" x2="590" y2="78.75" stroke="#a3472c" stroke-width="1.5" stroke-dasharray="5 4"/>
-                        <text x="590" y="72" text-anchor="end" font-size="11" fill="#a3472c">bin rim · 10.5 cm</text>
-                        <rect x="150" y="60" width="96" height="50" fill="#1a1a1a"><title>Carries that hit a bin: block peaked 8–12 cm above its start</title></rect>
-                        <text x="198" y="230" text-anchor="middle" font-size="11" fill="#1a1a1a">carries that hit a bin</text>
-                        <text x="198" y="245" text-anchor="middle" font-size="11" fill="#8a867d">8–12 cm</text>
-                        <rect x="360" y="22.5" width="96" height="50" fill="#b3ada1"><title>Normal carries: block peaked 11–15 cm above its start</title></rect>
-                        <text x="408" y="230" text-anchor="middle" font-size="11" fill="#1a1a1a">normal carries</text>
-                        <text x="408" y="245" text-anchor="middle" font-size="11" fill="#8a867d">11–15 cm</text>
-                    </svg>
-                    <figcaption>How high the block was lifted during each carry, original model. The carries that hit a bin barely reach the rim.</figcaption>
-                </figure>
-                <p>So the fix is simple to state: <strong>carry the block higher, without changing how the robot grasps.</strong></p>
-
-                <h3>The fix: four “lift higher” dials</h3>
-                <p>π0.5 is built from many small parts called attention heads, 288 of them in total. Each one adds its own small contribution to the robot's next move.</p>
-                <ol class="dials">
-                    <li><span class="n">1</span><b>Test each head</b><span>Turn it off, then double it, and measure one thing: how high the robot carries the block.</span></li>
-                    <li><span class="n">2</span><b>Find the dials</b><span>Four heads act like a dial. Turn them down and the carry drops; turn them up and it rises. Grasping stays the same.</span></li>
-                    <li><span class="n">3</span><b>Turn them up</b><span>Multiplying all four by 3 raises the carry by 2–3 cm, enough to clear the rim.</span></li>
-                </ol>
-                <div class="tbl">
-                    <table>
-                        <thead><tr><th>Four heads turned up</th><th class="num">Carry height</th><th class="num">Grasp height</th></tr></thead>
-                        <tbody>
-                            <tr><td>×2</td><td class="num">+1.4 cm</td><td class="num">no change</td></tr>
-                            <tr class="used"><td>×3 (used)</td><td class="num">+2.3 cm</td><td class="num">no change</td></tr>
-                            <tr><td>×4</td><td class="num">+3.0 cm</td><td class="num">starts to change</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <p>This changes 1.57 million of the model's 3.35 billion weights. The edited model is saved as an ordinary checkpoint and runs with the standard code, with no extra hooks at inference. The tests show what these heads do to the robot's movement; why the model computes it this way internally is a separate question.</p>
-
-                <h3>Result: before and after</h3>
+                <h3>Task 1 · Colour sorting</h3>
                 <figure class="fig-wide">
                     <div class="video-labels"><span>Before<span class="long"> · original weights</span></span><span>After<span class="long"> · 4 heads ×3</span></span></div>
                     <video src="/research/vla-weight-editing/media/sorting-before-after.mp4" poster="/research/vla-weight-editing/media/sorting-before-after-poster.jpg" autoplay muted loop playsinline controls preload="metadata" width="1286" height="356" aria-label="Same placement, side by side: the original model drags the left bin off the table; the edited model sorts all four blocks"></video>
@@ -168,10 +132,76 @@
                         </table>
                     </div>
                 </div>
+
+                <h3>Task 2 · Cups in basket</h3>
+                <p>This task was not used at all while designing the edit; it was run at the end only to check nothing broke. It improved instead. Cups are carried higher, as with the blocks, and episodes finish sooner. The gain is smaller than on Task 1.</p>
+                <figure class="fig-wide">
+                    <div class="video-labels"><span>Before<span class="long"> · original weights</span></span><span>After<span class="long"> · 4 heads ×3</span></span></div>
+                    <video src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" autoplay muted loop playsinline controls preload="metadata" width="1286" height="356" aria-label="Same placement, side by side: the original model knocks the second cup over; the edited model places both cups"></video>
+                    <figcaption>Same object placement, played at 2× speed. Left: the original model knocks the second cup over and runs out of time. Right: the edited model carries both cups high and finishes in 24 s.</figcaption>
+                </figure>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Cups in basket · 30 episodes</th><th class="num">Before</th><th class="num">After</th></tr></thead>
+                        <tbody>
+                            <tr><td>Successful episodes</td><td class="num">20</td><td class="num after">27</td></tr>
+                            <tr><td>Average episode time</td><td class="num">44 s</td><td class="num after">32 s</td></tr>
+                            <tr><td>How high cups are carried (typical)</td><td class="num">23.5 cm</td><td class="num after">28.6 cm</td></tr>
+                            <tr><td>Episodes where the robot grabbed another object</td><td class="num">12</td><td class="num">12</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>The robot still sometimes picks up a white box instead of a cup; the edit does not change that.</p>
             </section>
 
             <section class="part">
-                <div class="part-head"><span class="part-num">03</span><h2>Inside π0.5: where the edit lives</h2></div>
+                <div class="part-head"><span class="part-num">03</span><h2>How Opus 5.5 found the fix</h2></div>
+
+                <h3>The problem: blocks are carried too low</h3>
+                <p>Opus 5.5 first checked whether the model mixes up the colours. It doesn't: when both bins are on the table it puts almost every block in the right one. The real failure is mechanical. The robot carries the block low, the gripper catches the rim of the bin, and the arm drags the whole bin off the table. After that the task can't be finished.</p>
+                <figure class="chart">
+                    <svg viewBox="0 0 600 250" role="img" aria-label="Peak block height during carries. Carries that hit a bin peaked at 8 to 12 cm; normal carries at 11 to 15 cm. The bin rim is at 10.5 cm.">
+                        <g font-size="11" fill="#8a867d">
+                            <line x1="52" y1="210" x2="590" y2="210" stroke="#1a1a1a"/>
+                            <text x="44" y="214" text-anchor="end">0</text>
+                            <line x1="52" y1="160" x2="590" y2="160" stroke="#e4e1d8"/><text x="44" y="164" text-anchor="end">4</text>
+                            <line x1="52" y1="110" x2="590" y2="110" stroke="#e4e1d8"/><text x="44" y="114" text-anchor="end">8</text>
+                            <line x1="52" y1="60" x2="590" y2="60" stroke="#e4e1d8"/><text x="44" y="64" text-anchor="end">12</text>
+                            <line x1="52" y1="10" x2="590" y2="10" stroke="#e4e1d8"/><text x="44" y="14" text-anchor="end">16 cm</text>
+                        </g>
+                        <line x1="52" y1="78.75" x2="590" y2="78.75" stroke="#a3472c" stroke-width="1.5" stroke-dasharray="5 4"/>
+                        <text x="590" y="72" text-anchor="end" font-size="11" fill="#a3472c">bin rim · 10.5 cm</text>
+                        <rect x="150" y="60" width="96" height="50" fill="#1a1a1a"><title>Carries that hit a bin: block peaked 8–12 cm above its start</title></rect>
+                        <text x="198" y="230" text-anchor="middle" font-size="11" fill="#1a1a1a">carries that hit a bin</text>
+                        <text x="198" y="245" text-anchor="middle" font-size="11" fill="#8a867d">8–12 cm</text>
+                        <rect x="360" y="22.5" width="96" height="50" fill="#b3ada1"><title>Normal carries: block peaked 11–15 cm above its start</title></rect>
+                        <text x="408" y="230" text-anchor="middle" font-size="11" fill="#1a1a1a">normal carries</text>
+                        <text x="408" y="245" text-anchor="middle" font-size="11" fill="#8a867d">11–15 cm</text>
+                    </svg>
+                    <figcaption>How high the block was lifted during each carry, original model. The carries that hit a bin barely reach the rim.</figcaption>
+                </figure>
+                <p>So the fix is simple to state: <strong>carry the block higher, without changing how the robot grasps.</strong></p>
+
+                <h3>The fix: four “lift higher” dials</h3>
+                <p>π0.5 is built from many small parts called attention heads, 288 of them in total. Each one adds its own small contribution to the robot's next move.</p>
+                <ol class="dials">
+                    <li><span class="n">1</span><b>Test each head</b><span>Opus 5.5 turned each head off, then doubled it, and measured one thing: how high the robot carries the block.</span></li>
+                    <li><span class="n">2</span><b>Find the dials</b><span>Four heads act like a dial. Turn them down and the carry drops; turn them up and it rises. Grasping stays the same.</span></li>
+                    <li><span class="n">3</span><b>Turn them up</b><span>Multiplying all four by 3 raises the carry by 2–3 cm, enough to clear the rim.</span></li>
+                </ol>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Four heads turned up</th><th class="num">Carry height</th><th class="num">Grasp height</th></tr></thead>
+                        <tbody>
+                            <tr><td>×2</td><td class="num">+1.4 cm</td><td class="num">no change</td></tr>
+                            <tr class="used"><td>×3 (used)</td><td class="num">+2.3 cm</td><td class="num">no change</td></tr>
+                            <tr><td>×4</td><td class="num">+3.0 cm</td><td class="num">starts to change</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>This changes 1.57 million of the model's 3.35 billion weights. The edited model is saved as an ordinary checkpoint and runs with the standard code, with no extra hooks at inference. The tests show what these heads do to the robot's movement; why the model computes it this way internally is a separate question.</p>
+
+                <h3>Where the edit lives in π0.5</h3>
                 <p>π0.5 is two connected transformers. A large one (2B parameters) reads the camera images, the instruction and the robot's joint positions. A small one (300M, the “action expert”) reads what the large one produced and outputs the next second of movement. Each has 18 layers with 8 heads per layer. Two of the edited heads are in each.</p>
                 <div class="model">
                     <div class="model-row">
@@ -194,34 +224,11 @@
             </section>
 
             <section class="part">
-                <div class="part-head"><span class="part-num">04</span><h2>Task 2 · Cups in basket</h2></div>
-                <h3>The same edit also helped this task</h3>
-                <p>This task was not used at all while designing the edit; I ran it at the end only to check nothing broke. It improved instead. Cups are carried higher, as with the blocks, and episodes finish sooner. The gain is smaller than on Task 1.</p>
-                <figure class="fig-wide">
-                    <div class="video-labels"><span>Before<span class="long"> · original weights</span></span><span>After<span class="long"> · 4 heads ×3</span></span></div>
-                    <video src="/research/vla-weight-editing/media/cups-before-after.mp4" poster="/research/vla-weight-editing/media/cups-before-after-poster.jpg" autoplay muted loop playsinline controls preload="metadata" width="1286" height="356" aria-label="Same placement, side by side: the original model knocks the second cup over; the edited model places both cups"></video>
-                    <figcaption>Same object placement, played at 2× speed. Left: the original model knocks the second cup over and runs out of time. Right: the edited model carries both cups high and finishes in 24 s.</figcaption>
-                </figure>
-                <div class="tbl">
-                    <table>
-                        <thead><tr><th>Cups in basket · 30 episodes</th><th class="num">Before</th><th class="num">After</th></tr></thead>
-                        <tbody>
-                            <tr><td>Successful episodes</td><td class="num">20</td><td class="num after">27</td></tr>
-                            <tr><td>Average episode time</td><td class="num">44 s</td><td class="num after">32 s</td></tr>
-                            <tr><td>How high cups are carried (typical)</td><td class="num">23.5 cm</td><td class="num after">28.6 cm</td></tr>
-                            <tr><td>Episodes where the robot grabbed another object</td><td class="num">12</td><td class="num">12</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <p>The robot still sometimes picks up a white box instead of a cup; the edit does not change that.</p>
-            </section>
-
-            <section class="part">
-                <div class="part-head"><span class="part-num">05</span><h2>Limits</h2></div>
+                <div class="part-head"><span class="part-num">04</span><h2>Limits</h2></div>
                 <ul class="plain-list">
                     <li>One scene per task, in simulation. Other scenes and a real robot are untested.</li>
                     <li>The edited model occasionally puts a blue block in the wrong bin (4 times in 30 episodes), which the original rarely did.</li>
-                    <li>The heads were found by testing many candidates against one measurement, not guessed in one shot.</li>
+                    <li>Opus 5.5 found the heads by testing many candidates against one measurement, not by guessing in one shot.</li>
                 </ul>
             </section>
 

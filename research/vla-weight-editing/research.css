@@ -70,8 +70,8 @@ figcaption { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; mar
 .fig-wide { width: var(--wide); position: relative; left: 50%; transform: translateX(-50%); margin-block: var(--gap-s); }
 .fig-wide figcaption { max-width: 41rem; margin-left: auto; margin-right: auto; }
 .video-labels { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.5rem; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; }
-.video-labels span:first-child { color: var(--text-muted); }
-.video-labels span:last-child { color: var(--text); font-weight: 700; }
+.video-labels > span:first-child { color: var(--text-muted); }
+.video-labels > span:last-child { color: var(--text); font-weight: 700; }
 video { width: 100%; height: auto; display: block; background: var(--line); }
 .chart svg { width: 100%; height: auto; display: block; }
 .chart text { font-family: var(--font-mono); }
@@ -143,4 +143,15 @@ tr.used td { color: var(--text); font-weight: 700; }
     .dials li + li { border-left: 0; border-top: 1px solid var(--line); }
     .model-row { grid-template-columns: 1fr; }
     .grids { grid-template-columns: 1fr; }
+}
+
+/* ---------- Who did what ---------- */
+.roles { display: grid; grid-template-columns: 6.5rem 1fr; border-top: 1px solid var(--line); margin: 0; }
+.roles dt, .roles dd { padding: 0.8rem 0; border-bottom: 1px solid var(--line); font-size: 0.875rem; line-height: 1.65; }
+.roles dt { color: var(--text); font-weight: 700; }
+.roles dd { margin: 0; color: var(--text-secondary); }
+@media (max-width: 640px) {
+    .roles { grid-template-columns: 1fr; }
+    .roles dt { border-bottom: 0; padding-bottom: 0.1rem; }
+    .roles dd { padding-top: 0; }
 }

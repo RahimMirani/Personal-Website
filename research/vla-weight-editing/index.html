@@ -245,6 +245,72 @@
             </section>
 
             <section class="part">
+                <div class="part-head"><span class="part-num">04</span><h2>Seven more tasks</h2></div>
+                <p>After the two tasks above, I ran the same edited model, unchanged, on seven more tasks from RoboLab's benchmark. The edit was not designed on any of them. Each task ran 30 episodes per model, with objects placed slightly differently in every episode and the same 30 placements for both models.</p>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Successful episodes · 30 per task</th><th class="num">Before</th><th class="num">After</th></tr></thead>
+                        <tbody>
+                            <tr><td>Put the onion in the wood bowl</td><td class="num">8</td><td class="num after">26</td></tr>
+                            <tr><td>Stack the yellow block on the red block</td><td class="num">8</td><td class="num after">14</td></tr>
+                            <tr><td>Put the green spoons in the pot</td><td class="num">0</td><td class="num after">2</td></tr>
+                            <tr><td>Throw away the apple</td><td class="num">0</td><td class="num after">1</td></tr>
+                            <tr><td>Pick up the banana and place it in the bowl</td><td class="num">30</td><td class="num">30</td></tr>
+                            <tr><td>Put the serving bowl on the shelf</td><td class="num">0</td><td class="num">0</td></tr>
+                            <tr><td>Put the bagels on the plate</td><td class="num">0</td><td class="num">0</td></tr>
+                            <tr><td>All seven tasks (out of 210)</td><td class="num">46</td><td class="num after">73</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Better on four tasks, the same on three, worse on none. On two of them, the bowl on the shelf and the bagels on the plate, neither model succeeded once.</p>
+
+                <h3>Onion in the wood bowl</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/onion-before-after.mp4" poster="/research/vla-weight-editing/media/onion-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model drops the onion beside the bowl; the edited model puts it in the bowl"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/onion-before-after.mp4" poster="/research/vla-weight-editing/media/onion-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model drops the onion beside the bowl"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/onion-before-after.mp4" poster="/research/vla-weight-editing/media/onion-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model puts the onion in the bowl"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model lifts the onion off the fruit plate but lets go of it beside the bowl, and never gets it in. After: the edited model puts the onion in the bowl in 10 s.</figcaption>
+                </figure>
+
+                <h3>Stack the yellow block on the red block</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/stack-before-after.mp4" poster="/research/vla-weight-editing/media/stack-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model stacks a Rubik's cube on the red block; the edited model stacks the yellow block on it"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/stack-before-after.mp4" poster="/research/vla-weight-editing/media/stack-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model stacks a Rubik's cube on the red block"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/stack-before-after.mp4" poster="/research/vla-weight-editing/media/stack-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model stacks the yellow block on the red block"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model first stacks a Rubik's cube on the red block, then puts the yellow block down beside it. After: the edited model stacks the yellow block on the red block in 15 s.</figcaption>
+                </figure>
+
+                <h3>Banana in the bowl</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/banana-before-after.mp4" poster="/research/vla-weight-editing/media/banana-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: both models put the banana in the bowl"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/banana-before-after.mp4" poster="/research/vla-weight-editing/media/banana-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model puts the banana in the bowl"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/banana-before-after.mp4" poster="/research/vla-weight-editing/media/banana-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model puts the banana in the bowl"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Both models put the banana in the bowl in about 9 s. On the one task the original already solved every time, the edit changed nothing.</figcaption>
+                </figure>
+            </section>
+
+            <section class="part">
                 <div class="part-head"><span class="part-num">04</span><h2>Limits</h2></div>
                 <ul class="plain-list">
                     <li>One scene per task, in simulation. Other scenes and a real robot are untested.</li>

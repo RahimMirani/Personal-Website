@@ -294,6 +294,36 @@
                     <figcaption>Same object placement, played at 2× speed. Before: the original model first stacks a Rubik's cube on the red block, then puts the yellow block down beside it. After: the edited model stacks the yellow block on the red block in 15 s.</figcaption>
                 </figure>
 
+                <h3>Green spoons in the pot</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/spoons-before-after.mp4" poster="/research/vla-weight-editing/media/spoons-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model gets one green utensil into the pot; the edited model gets all three in"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/spoons-before-after.mp4" poster="/research/vla-weight-editing/media/spoons-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model gets one green utensil into the pot"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/spoons-before-after.mp4" poster="/research/vla-weight-editing/media/spoons-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model gets all three green utensils into the pot"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 4× speed. Before: the original model gets one of the three green utensils into the pot. After: the edited model gets all three in, one at a time, in 126 s. This is one of the edited model's two successes on this task.</figcaption>
+                </figure>
+
+                <h3>Throw away the apple</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/apple-before-after.mp4" poster="/research/vla-weight-editing/media/apple-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model keeps dropping the apple; the edited model puts it in the bin"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/apple-before-after.mp4" poster="/research/vla-weight-editing/media/apple-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model keeps dropping the apple"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/apple-before-after.mp4" poster="/research/vla-weight-editing/media/apple-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model puts the apple in the bin"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model picks up the apple several times but drops it each time before reaching the bin. After: the edited model drops it once too, picks it up again and puts it in the bin at 26 s. This is the edited model's only success on this task.</figcaption>
+                </figure>
+
                 <h3>Banana in the bowl</h3>
                 <figure class="fig-wide compare">
                     <div class="compare-wide">
@@ -307,6 +337,36 @@
                         <video class="half right" src="/research/vla-weight-editing/media/banana-before-after.mp4" poster="/research/vla-weight-editing/media/banana-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model puts the banana in the bowl"></video>
                     </div>
                     <figcaption>Same object placement, played at 2× speed. Both models put the banana in the bowl in about 9 s. On the one task the original already solved every time, the edit changed nothing.</figcaption>
+                </figure>
+
+                <h3>Serving bowl on the shelf</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/shelf-before-after.mp4" poster="/research/vla-weight-editing/media/shelf-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: in both, the arm knocks the shelf off the table and the bowl stays where it was"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/shelf-before-after.mp4" poster="/research/vla-weight-editing/media/shelf-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the arm knocks the shelf off the table"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/shelf-before-after.mp4" poster="/research/vla-weight-editing/media/shelf-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the arm also knocks the shelf off the table"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Neither model picks up the bowl. In both, the arm hits the shelf early in the episode and knocks it off the table, after which the task can't be done. That happened in 29 of the original model's 30 episodes and 18 of the edited model's.</figcaption>
+                </figure>
+
+                <h3>Bagels on the plate</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 4 heads ×3</span></div>
+                        <video src="/research/vla-weight-editing/media/bagels-before-after.mp4" poster="/research/vla-weight-editing/media/bagels-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model gets one bagel onto the plate; the edited model gets none"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/vla-weight-editing/media/bagels-before-after.mp4" poster="/research/vla-weight-editing/media/bagels-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model gets one bagel onto the plate"></video>
+                        <span class="crop-label after">After · 4 heads ×3</span>
+                        <video class="half right" src="/research/vla-weight-editing/media/bagels-before-after.mp4" poster="/research/vla-weight-editing/media/bagels-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model gets neither bagel onto the plate"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model gets one bagel onto the plate but not the second, so the episode doesn't count. After: the edited model carries one bagel away from the plate and gets neither onto it. Neither model succeeded on this task in 30 episodes.</figcaption>
                 </figure>
             </section>
 

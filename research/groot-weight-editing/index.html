@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#faf9f5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Editing GR00T's weights tripled its colour sorting ability, with no fine-tuning — Abdul Rahim Mirani</title>
+    <meta name="description" content="Opus 5.5 repeated the π0.5 weight-editing experiment on NVIDIA's GR00T N1.7 on its own: it traced the colour-sorting failure to two attention heads and turned them up. No training: 4/30 → 12/30.">
+    <link rel="canonical" href="https://www.abdulrahimmirani.com/research/groot-weight-editing">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Editing GR00T's weights tripled its colour sorting ability, with no fine-tuning">
+    <meta property="og:description" content="Opus 5.5 found why GR00T N1.7 sorts blocks into the wrong bin and fixed it by editing two attention heads. No training: 4/30 → 12/30.">
+    <meta property="og:url" content="https://www.abdulrahimmirani.com/research/groot-weight-editing">
+    <meta property="og:image" content="https://www.abdulrahimmirani.com/research/groot-weight-editing/media/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Side by side: the original GR00T puts a blue block in the yellow blocks' bin; the edited model sorts all four blocks.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@rahim_mirani">
+    <meta name="twitter:title" content="Editing GR00T's weights tripled its colour sorting ability, with no fine-tuning">
+    <meta name="twitter:description" content="Two attention heads edited, no training. Colour sorting: 4/30 → 12/30.">
+    <meta name="twitter:image" content="https://www.abdulrahimmirani.com/research/groot-weight-editing/media/og-image.jpg">
+    <meta name="twitter:image:alt" content="Side by side: the original GR00T puts a blue block in the yellow blocks' bin; the edited model sorts all four blocks.">
+    <meta name="author" content="Abdul Rahim Mirani">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/research/vla-weight-editing/research.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .heads.w16 { grid-template-columns: 2rem repeat(16, 1fr); max-width: 26rem; }
+        .article .article-meta a { color: inherit; }
+    </style>
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body>
+    <main>
+        <a href="/" class="back-link">Home</a>
+
+        <article class="article">
+            <header class="article-head">
+                <h1 class="article-title">Editing GR00T's weights tripled its colour sorting ability, with no fine-tuning</h1>
+                <p class="article-meta">Abdul Rahim Mirani · November 2026</p>
+                <p class="article-meta">Follow-up to <a href="/research/vla-weight-editing">Directly editing a VLA's weights improved its performance, with no fine-tuning</a>, the same experiment on π0.5.</p>
+                <p class="lede">In my last write-up, Opus 5.5 fixed π0.5's colour sorting by editing four attention heads. This time I gave it the same experiment on a different robot policy, NVIDIA's GR00T N1.7, and it ran the whole thing on its own. GR00T fails for a different reason: it puts blue blocks in the wrong bin. Opus 5.5 traced that to two attention heads and turned them up 3×. No training and no fine-tuning: sorting went from 4 to 12 successes out of 30. Unlike with π0.5, the edit has a cost: grasps got slightly less precise, and a second task got worse.</p>
+                <div class="stats">
+                    <div class="stat"><span class="stat-label">Colour sorting</span><span class="stat-value"><span class="was">4</span> → 12</span><span class="stat-note">successes out of 30</span></div>
+                    <div class="stat"><span class="stat-label">Mugs in bin</span><span class="stat-value"><span class="was">5</span> → 0</span><span class="stat-note">not used to design the edit</span></div>
+                    <div class="stat"><span class="stat-label">Weights changed</span><span class="stat-value">0.015%</span><span class="stat-note">2 heads, no training</span></div>
+                </div>
+            </header>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">01</span><h2>Setup</h2></div>
+                <p>The policy is the public <code>GR00T-N1.7-DROID</code> checkpoint, used exactly as released. Everything else matches the π0.5 study: Isaac Sim, a Franka arm, a Robotiq gripper and DROID's two cameras, one over the shoulder and one on the wrist. Objects are placed slightly differently in every episode; for colour sorting and the seven extra tasks, the placements are the same as in the π0.5 study.</p>
+
+                <div class="tasks">
+                    <div class="task">
+                        <img src="/research/vla-weight-editing/media/scene-sorting.jpg" width="864" height="480" alt="Colour sorting scene: two grey bins on a wooden table with two blue and two yellow blocks between them">
+                        <div class="task-body">
+                            <span class="task-name">Task 1 · Colour sorting</span>
+                            <p class="task-prompt">“Put the blue blocks in the right bin and the yellow blocks in the left bin.”</p>
+                            <dl>
+                                <dt>Objects</dt><dd>4 blocks, 2 movable bins 10.5 cm tall</dd>
+                                <dt>Success</dt><dd>every block in its own bin</dd>
+                                <dt>Time limit</dt><dd>120 s</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="task">
+                        <img src="/research/groot-weight-editing/media/scene-mugs.jpg" width="864" height="480" alt="Mugs scene: a grey bin, two white mugs, three Rubik's cubes, a ketchup bottle, a red bowl and two bananas on a dark wooden table" loading="lazy">
+                        <div class="task-body">
+                            <span class="task-name">Task 2 · Mugs in bin</span>
+                            <p class="task-prompt">“Put the two white mugs in the grey bin”</p>
+                            <dl>
+                                <dt>Objects</dt><dd>2 mugs, a bin, 7 other objects</dd>
+                                <dt>Success</dt><dd>both mugs in the bin</dd>
+                                <dt>Time limit</dt><dd>60 s</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <p>The second task differs from the π0.5 study: its cups-in-basket scene was replaced by RoboLab's mugs-in-bin task, which has the same goal.</p>
+
+                <h3>The process</h3>
+                <ol class="steps">
+                    <li><span class="n">1</span><b>Run the original model</b><span>on both tasks</span></li>
+                    <li><span class="n">2</span><b>Diagnose Task 1</b><span>watch the failures, measure what goes wrong</span></li>
+                    <li class="key"><span class="n">3</span><b>Edit the weights</b><span>using Task 1 only</span></li>
+                    <li><span class="n">4</span><b>Run the edited model</b><span>on both tasks, same 30 placements, then on seven more tasks</span></li>
+                </ol>
+                <p class="callout">The edit was designed using only the colour-sorting task. The mugs task played no part in choosing it and was only checked for harm. All before and after results come from 30 object placements per task that were not used while designing the edit.</p>
+
+                <h3>Who did what</h3>
+                <dl class="roles">
+                    <dt>Me</dt>
+                    <dd>Set the question, chose to repeat the π0.5 experiment on GR00T, and reviewed the results.</dd>
+                    <dt>Opus 5.5</dt>
+                    <dd>Everything else, on its own from start to finish: set up GR00T, ran the original model, found the cause of the failures, chose the two heads, edited the weights, ran the before and after tests and wrote up the results. It had the edit chosen and frozen within five hours of starting.</dd>
+                </dl>
+            </section>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">02</span><h2>Results</h2></div>
+
+                <h3>Task 1 · Colour sorting</h3>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 2 heads ×3</span></div>
+                        <video src="/research/groot-weight-editing/media/sorting-before-after.mp4" poster="/research/groot-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model puts the first blue block in the yellow blocks' bin; the edited model sorts all four blocks"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/groot-weight-editing/media/sorting-before-after.mp4" poster="/research/groot-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model puts the first blue block in the yellow blocks' bin"></video>
+                        <span class="crop-label after">After · 2 heads ×3</span>
+                        <video class="half right" src="/research/groot-weight-editing/media/sorting-before-after.mp4" poster="/research/groot-weight-editing/media/sorting-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model sorts all four blocks"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. The camera faces the robot, so the robot's right bin is on the left of the frame. Before: the original model drops the first blue block into the left bin, with the yellow blocks, so the episode can't be won. After: the edited model puts both blue blocks in the right bin and sorts all four in 41 s.</figcaption>
+                </figure>
+                <div class="results">
+                    <div class="bars">
+                        <div class="bar-group">
+                            <div class="bar-title">Successful episodes (out of 30)</div>
+                            <div class="bar-row"><span>Before</span><div class="bar-track"><div class="bar-fill before" style="--v:4"></div></div><span class="v">4</span></div>
+                            <div class="bar-row"><span>After</span><div class="bar-track"><div class="bar-fill after" style="--v:12"></div></div><span class="v">12</span></div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar-title">Blocks put in the wrong bin (30 episodes)</div>
+                            <div class="bar-row"><span>Before</span><div class="bar-track"><div class="bar-fill before" style="--v:21"></div></div><span class="v">21</span></div>
+                            <div class="bar-row"><span>After</span><div class="bar-track"><div class="bar-fill after" style="--v:0"></div></div><span class="v">0</span></div>
+                        </div>
+                    </div>
+                    <div class="tbl">
+                        <table>
+                            <thead><tr><th>Colour sorting · 30 episodes</th><th class="num">Before</th><th class="num">After</th></tr></thead>
+                            <tbody>
+                                <tr><td>Successful episodes</td><td class="num">4</td><td class="num after">12</td></tr>
+                                <tr><td>Blocks sorted, average out of 4</td><td class="num">2.1</td><td class="num after">2.9</td></tr>
+                                <tr><td>Blocks put in the wrong bin</td><td class="num">21</td><td class="num after">0</td></tr>
+                                <tr><td>Episodes with a bin knocked off</td><td class="num">1</td><td class="num after">0</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <p>The edited model still fails 18 of 30 episodes, mostly in a different way that both models share: after one or two blocks the arm hovers with the gripper open and never grasps again. The edit doesn't touch that.</p>
+
+                <h3>Task 2 · Mugs in bin</h3>
+                <p>This task played no part in choosing the edit. It got worse: the edited model didn't finish a single episode.</p>
+                <figure class="fig-wide compare">
+                    <div class="compare-wide">
+                        <div class="video-labels"><span>Before · original weights</span><span>After · 2 heads ×3</span></div>
+                        <video src="/research/groot-weight-editing/media/mugs-before-after.mp4" poster="/research/groot-weight-editing/media/mugs-before-after-poster.jpg" muted loop playsinline controls preload="metadata" data-autoplay width="1286" height="356" aria-label="Same placement, side by side: the original model puts both mugs in the bin; the edited model ends up with a mug hooked on the gripper"></video>
+                    </div>
+                    <div class="compare-stack">
+                        <span class="crop-label">Before · original weights</span>
+                        <video class="half left" src="/research/groot-weight-editing/media/mugs-before-after.mp4" poster="/research/groot-weight-editing/media/mugs-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="Before: the original model puts both mugs in the bin"></video>
+                        <span class="crop-label after">After · 2 heads ×3</span>
+                        <video class="half right" src="/research/groot-weight-editing/media/mugs-before-after.mp4" poster="/research/groot-weight-editing/media/mugs-before-after-poster.jpg" muted loop playsinline controls preload="none" data-autoplay aria-label="After: the edited model ends up with a mug hooked on the gripper"></video>
+                    </div>
+                    <figcaption>Same object placement, played at 2× speed. Before: the original model puts both mugs in the bin in 29 s. After: the edited model grabs the first mug by its rim, the mug ends up hooked on the gripper, and neither mug reaches the bin.</figcaption>
+                </figure>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Mugs in bin · 30 episodes</th><th class="num">Before</th><th class="num">After</th></tr></thead>
+                        <tbody>
+                            <tr><td>Successful episodes</td><td class="num">5</td><td class="num">0</td></tr>
+                            <tr><td>Mugs in the bin, average out of 2</td><td class="num">0.70</td><td class="num">0.37</td></tr>
+                            <tr><td>First grasps that hook the mug</td><td class="num">20</td><td class="num">23</td></tr>
+                            <tr><td>Time with a mug stuck on the gripper, per episode</td><td class="num">9.7 s</td><td class="num">15.0 s</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Hooked mugs were already the original model's main failure here. The edit makes it more frequent; the reason is in the next section.</p>
+            </section>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">03</span><h2>How Opus 5.5 found the fix</h2></div>
+
+                <h3>The problem: “right bin” barely registers</h3>
+                <p>π0.5 failed at sorting because it carried blocks too low and caught the bin rims. GR00T doesn't: it carries high and places cleanly. Its failure is the destination. In the original model's tests, 21 blocks went into the wrong bin, and every one of them was a blue block going left.</p>
+                <p>Opus 5.5 replayed the moment each carry starts through the model with different instructions, and read off which bin the arm heads for:</p>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Instruction given</th><th class="num">Blue goes left</th></tr></thead>
+                        <tbody>
+                            <tr><td>The task's: blue → right bin, yellow → left bin</td><td class="num">53%</td></tr>
+                            <tr><td>Swapped: blue → left bin, yellow → right bin</td><td class="num">99%</td></tr>
+                            <tr><td>Only “Put the blue blocks in the right bin.”</td><td class="num">58%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="table-note">48 recorded carry starts, each with 4 different random seeds.</p>
+                <p>So GR00T understands colour: told to put blue on the left, it does so 99% of the time. What's weak is the word “right”. Even an instruction that only says “right bin” sends blue left more than half the time. The fix to aim for: <strong>make “right bin” count, without changing anything else.</strong></p>
+
+                <h3>The fix: two “right bin” dials</h3>
+                <ol class="dials">
+                    <li><span class="n">1</span><b>Test each layer</b><span>Opus 5.5 turned each layer's attention off, then doubled it, and measured one thing: which bin the arm heads for. Two late layers of the language model, 12 and 13, moved it the most consistently, in both directions.</span></li>
+                    <li><span class="n">2</span><b>Find the dials</b><span>Inside those layers, two heads act like a “right bin” dial: turn them down and blue goes left more, turn them up and it goes right.</span></li>
+                    <li><span class="n">3</span><b>Turn them up</b><span>Multiplying both by 3 sends blue to the correct bin in 95% of the recorded moments. In the full tests, not one block went to the wrong bin.</span></li>
+                </ol>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Two heads turned up</th><th class="num">Blocks headed to the correct bin</th><th class="num">Other movement changed by</th></tr></thead>
+                        <tbody>
+                            <tr><td>×1 (original)</td><td class="num">76%</td><td class="num">–</td></tr>
+                            <tr><td>×2</td><td class="num">92%</td><td class="num">1.6 cm</td></tr>
+                            <tr class="used"><td>×3 (used)</td><td class="num">95%</td><td class="num">2.6 cm</td></tr>
+                            <tr><td>×4</td><td class="num">98%</td><td class="num">3.7 cm</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="table-note">Measured while designing the edit, on recorded inputs from the original model. “Other movement” is how far the arm's planned movement shifts at moments before a grasp, where the bin shouldn't matter. The test results are in the Results section above.</p>
+                <p>This changes 524,288 of the model's 3.46 billion weights. The edited model is saved as an ordinary checkpoint and runs with the standard code, with no extra hooks at inference.</p>
+
+                <h3>The side effect</h3>
+                <p>The two heads don't only carry “right bin”. Turned up 3×, they shift the gripper about half a centimetre toward the robot's right and slightly higher in general. Carrying blocks to a bin doesn't care about that. Grasping a mug by its rim or picking up a banana does: the edited model closes its gripper a few millimetres off and hooks the mug or misses the banana more often.</p>
+
+                <h3>Where the edit lives in GR00T</h3>
+                <p>GR00T is a vision-language model (the first 16 layers of NVIDIA's Cosmos-Reason2 2B) followed by an action head, a diffusion transformer with 32 layers that turns the language model's output and the robot's state into movement. Both edited heads are in the language model, which has 16 heads per layer.</p>
+                <div class="model">
+                    <div class="model-row">
+                        <div class="box"><b>Shoulder camera</b>image</div>
+                        <div class="box"><b>Wrist camera</b>image</div>
+                        <div class="box"><b>Text</b>instruction</div>
+                    </div>
+                    <div class="down">↓</div>
+                    <div class="box edited"><b>Vision-language model · 16 layers × 16 heads</b>edited: <span class="mark">layer 12 head 5</span>, <span class="mark">layer 13 head 6</span></div>
+                    <div class="down">↓</div>
+                    <div class="box"><b>Action head · diffusion transformer, 32 layers</b>also reads the robot's state</div>
+                    <div class="down">↓</div>
+                    <div class="box"><b>Next movements</b>40 steps of joint targets + gripper</div>
+                </div>
+                <div class="grid-card"><span class="grid-title">Vision-language model heads</span><div class="heads w16" id="heads-vlm" role="img" aria-label="Grid of 16 layers by 16 heads; layer 12 head 5 and layer 13 head 6 are edited"></div></div>
+                <div class="legend"><span><i class="sw edited"></i>edited (output ×3)</span><span><i class="sw unchanged"></i>unchanged</span></div>
+                <noscript><p>Edited heads: vision-language model layer 12 head 5 and layer 13 head 6.</p></noscript>
+            </section>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">04</span><h2>Seven more tasks</h2></div>
+                <p>As with π0.5, I then ran the edited model, unchanged, on seven more tasks from RoboLab's benchmark, with the same 30 placements per task as in the π0.5 study.</p>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>Successful episodes · 30 per task</th><th class="num">Before</th><th class="num">After</th></tr></thead>
+                        <tbody>
+                            <tr><td>Pick up the banana and place it in the bowl</td><td class="num">29</td><td class="num">23</td></tr>
+                            <tr><td>Put the onion in the wood bowl</td><td class="num">2</td><td class="num after">5</td></tr>
+                            <tr><td>Put the serving bowl on the shelf</td><td class="num">0</td><td class="num after">1</td></tr>
+                            <tr><td>Stack the yellow block on the red block</td><td class="num">0</td><td class="num">0</td></tr>
+                            <tr><td>Put the bagels on the plate</td><td class="num">0</td><td class="num">0</td></tr>
+                            <tr><td>Put the green spoons in the pot</td><td class="num">0</td><td class="num">0</td></tr>
+                            <tr><td>Throw away the apple</td><td class="num">0</td><td class="num">0</td></tr>
+                            <tr><td>All seven tasks (out of 210)</td><td class="num">31</td><td class="num">29</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Level overall. The onion and the shelf improved a little; banana got worse, almost all of it missed grasps from the same small shift. The other four tasks were 0 for both models. On π0.5, the same kind of edit carried over: those seven tasks went from 46 to 73 successes.</p>
+            </section>
+
+            <section class="part">
+                <div class="part-head"><span class="part-num">05</span><h2>Limits</h2></div>
+                <ul class="plain-list">
+                    <li>Simulation only, one scene per task. A real robot is untested.</li>
+                    <li>The edit removes the wrong-bin failure, but sorting still fails 18 of 30 episodes, mostly because the arm stops grasping after one or two blocks.</li>
+                    <li>Unlike the π0.5 edit, this one does not carry over to other tasks, and it makes precise grasps slightly worse.</li>
+                    <li>The second task is mugs in a bin instead of the π0.5 study's cups in a basket, so that comparison is not like for like.</li>
+                    <li>Opus 5.5 found the heads by testing many candidates against one measurement, not by guessing in one shot.</li>
+                </ul>
+            </section>
+
+            <footer class="credits">
+                <p>Follows <a href="/research/vla-weight-editing">Directly editing a VLA's weights improved its performance, with no fine-tuning</a>. Inspired by <a href="https://rikiyat.github.io/blog/weight-space-programming/" target="_blank" rel="noopener noreferrer">Weight-Space Programming</a>. Model: GR00T N1.7 by NVIDIA (<a href="https://github.com/NVIDIA/Isaac-GR00T" target="_blank" rel="noopener noreferrer">Isaac GR00T</a>). The colour-sorting scene is built from <a href="https://research.nvidia.com/labs/srl/projects/robolab" target="_blank" rel="noopener noreferrer">RoboLab</a>'s two-bin scene and blocks; the mugs task and the seven tasks in section 04 are RoboLab's own. Simulation in NVIDIA Isaac Sim and Isaac Lab.</p>
+            </footer>
+        </article>
+    </main>
+
+    <script>
+        (function () {
+            function grid(id, layers, heads, edited) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var html = '<span></span>';
+                for (var c = 0; c < heads; c++) html += '<span class="col">' + c + '</span>';
+                for (var layer = 0; layer < layers; layer++) {
+                    html += '<span>L' + layer + '</span>';
+                    for (var head = 0; head < heads; head++) {
+                        var on = edited.some(function (p) { return p[0] === layer && p[1] === head; });
+                        html += '<i' + (on ? ' class="on"' : '') + ' title="layer ' + layer + ' head ' + head + (on ? ': output ×3' : '') + '"></i>';
+                    }
+                }
+                el.innerHTML = html;
+            }
+            grid('heads-vlm', 16, 16, [[12, 5], [13, 6]]);
+
+            // Before/after clips: start automatically when at least 35% is on screen, and pause again when they've
+            // scrolled away, but only if the script started them. A clip the visitor paused stays paused while it is
+            // on screen; one they started keeps playing. With reduced motion preferred, nothing starts automatically.
+            var reduce = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+            var clips = Array.prototype.slice.call(document.querySelectorAll("video[data-autoplay]"));
+            clips.forEach(function (v) {
+                v._clip = { auto: false, userPaused: false, ownPlay: 0, ownPause: 0 };
+                v.addEventListener("pause", function () {
+                    var c = v._clip;
+                    if (c.ownPause > 0) { c.ownPause--; return; }
+                    c.userPaused = true; c.auto = false;   // paused by the visitor (or the browser) while on screen
+                });
+                v.addEventListener("play", function () {
+                    var c = v._clip;
+                    if (c.ownPlay > 0) { c.ownPlay--; return; }
+                    c.userPaused = false;
+                });
+            });
+            function start(v) {
+                var c = v._clip;
+                if (c.userPaused || !v.paused || (reduce && reduce.matches)) return;
+                c.ownPlay++; c.auto = true;
+                var p = v.play();
+                if (p && p.catch) p.catch(function () { if (c.ownPlay > 0) c.ownPlay--; c.auto = false; });
+            }
+            function stop(v) {
+                var c = v._clip;
+                c.userPaused = false;   // a pause only holds while the clip stays on screen
+                if (!c.auto || v.paused) return;
+                c.ownPause++; c.auto = false;
+                v.pause();
+            }
+            if ("IntersectionObserver" in window) {
+                var io = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (e) { if (e.intersectionRatio >= 0.35) start(e.target); else stop(e.target); });
+                }, { threshold: [0, 0.35] });
+                clips.forEach(function (v) { io.observe(v); });
+            }
+        })();
+    </script>
+</body>
+</html>

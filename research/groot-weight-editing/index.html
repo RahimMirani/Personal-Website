@@ -223,7 +223,7 @@
                 <p>The two heads don't only carry “right bin”. Turned up 3×, they shift the gripper about half a centimetre toward the robot's right and slightly higher in general. Carrying blocks to a bin doesn't care about that. Grasping a mug by its rim or picking up a banana does: the edited model closes its gripper a few millimetres off and hooks the mug or misses the banana more often.</p>
 
                 <h3>Where the edit lives in GR00T</h3>
-                <p>GR00T is a vision-language model (the first 16 layers of NVIDIA's Cosmos-Reason2 2B) followed by an action head, a diffusion transformer with 32 layers that turns the language model's output and the robot's state into movement. Both edited heads are in the language model, which has 16 heads per layer.</p>
+                <p>GR00T is a vision-language-action model with two parts. A vision-language backbone (the first 16 layers of NVIDIA's Cosmos-Reason2 2B) reads the camera images and the instruction. An action head, a diffusion transformer with 32 layers, turns the backbone's output and the robot's state into movement. Both edited heads are in the backbone, which has 16 heads per layer.</p>
                 <div class="model">
                     <div class="model-row">
                         <div class="box"><b>Shoulder camera</b>image</div>
@@ -231,15 +231,15 @@
                         <div class="box"><b>Text</b>instruction</div>
                     </div>
                     <div class="down">↓</div>
-                    <div class="box edited"><b>Vision-language model · 16 layers × 16 heads</b>edited: <span class="mark">layer 12 head 5</span>, <span class="mark">layer 13 head 6</span></div>
+                    <div class="box edited"><b>Vision-language backbone · 16 layers × 16 heads</b>edited: <span class="mark">layer 12 head 5</span>, <span class="mark">layer 13 head 6</span></div>
                     <div class="down">↓</div>
                     <div class="box"><b>Action head · diffusion transformer, 32 layers</b>also reads the robot's state</div>
                     <div class="down">↓</div>
                     <div class="box"><b>Next movements</b>40 steps of joint targets + gripper</div>
                 </div>
-                <div class="grid-card"><span class="grid-title">Vision-language model heads</span><div class="heads w16" id="heads-vlm" role="img" aria-label="Grid of 16 layers by 16 heads; layer 12 head 5 and layer 13 head 6 are edited"></div></div>
+                <div class="grid-card"><span class="grid-title">Vision-language backbone heads</span><div class="heads w16" id="heads-vlm" role="img" aria-label="Grid of 16 layers by 16 heads; layer 12 head 5 and layer 13 head 6 are edited"></div></div>
                 <div class="legend"><span><i class="sw edited"></i>edited (output ×3)</span><span><i class="sw unchanged"></i>unchanged</span></div>
-                <noscript><p>Edited heads: vision-language model layer 12 head 5 and layer 13 head 6.</p></noscript>
+                <noscript><p>Edited heads: vision-language backbone layer 12 head 5 and layer 13 head 6.</p></noscript>
             </section>
 
             <section class="part">
